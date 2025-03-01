@@ -348,3 +348,108 @@ function renderJourneyDetail() {
   
   mainContent.innerHTML = html;
 }
+/**
+ * Render source detail view
+ */
+function renderSourceDetail() {
+  if (!selectedSource) {
+    mainContent.innerHTML = `
+      <div class="card">
+        <div class="section-header">
+          <h2>Data Sources</h2>
+          <button class="add-new-btn" onclick="openAddSourceModal()">+ Add Source</button>
+        </div>
+        <p>Select a source to view details</p>
+        <div class="source-list">
+          ${appData.sources.map(source => `
+            <div class="item" onclick="selectSource('${source.id}')">
+              <div class="item-title">${source.name}</div>
+              <div class="item-subtitle">${source.type}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+    return;
+  }
+  
+  const source = appData.sources.find(s => s.id === selectedSource);
+  if (!source) {
+    mainContent.innerHTML = '<p>Source not found</p>';
+    return;
+  }
+  
+  const associatedPlatforms = appData.platforms.filter(p => 
+    source.associatedPlatforms.includes(p.id)
+  );
+  
+  let html = `
+    <div class="card">
+      <div class="section-header">
+        <h2>${source.name}</h2>
+        <button class="add-new-btn" onclick="SourceModal('${source.id}')">Edit Source</button>
+      </div>
+      
+      <p>${source.description}</p>
+      
+      <div class="grid">
+        <div>
+          <h3>Source Details</h3>
+          <div class="detail-grid">
+            <strong>Type:</strong> <span class="tag tag-blue">${source.type}</span>
+            <strong>Access Method:</strong> <span>${source.accessMethod}</span>
+          </div>
+        </div>
+        
+        <div>
+          <h3>Technologies</h3>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+            ${source.technologies.map(tech => `
+              <span class="tag tag-purple">${tech}</span>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+      
+      <h3>Data Characteristics</h3>
+      <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+        <div>
+          <strong>Data Types:</strong>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+            ${source.dataTypes.map(type => `
+              <span class="tag tag-green">${type}</span>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+      
+      <h3>Data Governance</h3>
+      <div class="grid">
+        <div>
+          <strong>Owner:</strong> ${source.dataGovernance.owner}
+        </div>
+        <div>
+          <strong>Sensitivity Level:</strong> 
+          <span class="tag tag-red">${source.dataGovernance.sensitivityLevel}</span>
+        </div>
+        <div>
+          <strong>Refresh Frequency:</strong> 
+          ${source.dataGovernance.refreshFrequency}
+        </div>
+      </div>
+      
+      <h3>Associated Platforms</h3>
+      <div class="grid" style="margin-top: 15px;">
+        ${associatedPlatforms.map(platform => `
+          <div class="item" onclick="selectPlatform('${platform.id}')">
+            <div class="item-title">${platform.name}</div>
+            <div class="item-subtitle">${platform.description}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+  
+  mainContent.innerHTML = html;
+}
+        
