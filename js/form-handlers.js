@@ -149,22 +149,12 @@ function handleAddPlatformSubmit(e) {
     integrations,
     primaryUsers: [] // Empty initially, will be populated when personas select it
   };
-  
-  // Add to data
+
+// Add to data
   appData.platforms.push(newPlatform);
   
-    /**
-   * Save application data to Firestore
-   */
-  async function saveAppData() {
-    try {
-      await db.collection("appData").doc("mainData").set(appData);
-      console.log('Data saved successfully to Firestore');
-    } catch (error) {
-      console.error('Failed to save data to Firestore:', error);
-      alert('There was a problem saving your changes. Please try again or check console for errors.');
-    }
-  }
+// Save the data
+  saveAppData(); // Just call the function, don't define it here
   
   // Close modal and refresh view
   closeModal();
@@ -512,17 +502,22 @@ function handleEditJourneySubmit(e) {
   renderContent();
 }
 
-/**
- * Save application data to localStorage
- */
-function saveAppData() {
-  try {
-    localStorage.setItem('dataExperienceAppData', JSON.stringify(appData));
-  } catch (error) {
-    console.error('Failed to save data:', error);
-    alert('There was a problem saving your changes. Please try again or check console for errors.');
+
+  // Add to data
+  appData.platforms.push(newPlatform);
+  
+    /**
+   * Save application data to Firestore
+   */
+  async function saveAppData() {
+    try {
+      await db.collection("appData").doc("mainData").set(appData);
+      console.log('Data saved successfully to Firestore');
+    } catch (error) {
+      console.error('Failed to save data to Firestore:', error);
+      alert('There was a problem saving your changes. Please try again or check console for errors.');
+    }
   }
-}
 
 /**
  * Load application data from Firestore
