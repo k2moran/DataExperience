@@ -3,6 +3,40 @@
  */
 
 /**
+ * Save application data to Firestore
+ */
+async function saveAppData() {
+  try {
+    await db.collection("appData").doc("mainData").set(appData);
+    console.log('Data saved successfully to Firestore');
+  } catch (error) {
+    console.error('Failed to save data to Firestore:', error);
+    alert('There was a problem saving your changes. Please try again or check console for errors.');
+  }
+}
+
+/**
+ * Load application data from Firestore
+ * @returns {Promise<Object|null>} The loaded app data or null if not found
+ */
+async function loadAppData() {
+  try {
+    const doc = await db.collection("appData").doc("mainData").get();
+    
+    if (doc.exists) {
+      console.log('Successfully loaded data from Firestore');
+      return doc.data();
+    } else {
+      console.log('No data found in Firestore');
+      return null;
+    }
+  } catch (error) {
+    console.error('Failed to load data from Firestore:', error);
+    return null;
+  }
+}
+
+/**
  * Helper for adding dynamic inputs (capabilities, pain points, etc.)
  * @param {string} containerId - ID of the container element
  * @param {string} inputName - Name attribute for the input
@@ -149,12 +183,12 @@ function handleAddPlatformSubmit(e) {
     integrations,
     primaryUsers: [] // Empty initially, will be populated when personas select it
   };
-
-// Add to data
+  
+  // Add to data
   appData.platforms.push(newPlatform);
   
-// Save the data
-  saveAppData(); // Just call the function, don't define it here
+  // Save the data
+  saveAppData();
   
   // Close modal and refresh view
   closeModal();
@@ -500,42 +534,4 @@ function handleEditJourneySubmit(e) {
   closeModal();
   selectedJourney = id;
   renderContent();
-}
-
-
-  // Add to data
-  appData.platforms.push(newPlatform);
-  
-    /**
-   * Save application data to Firestore
-   */
-  async function saveAppData() {
-    try {
-      await db.collection("appData").doc("mainData").set(appData);
-      console.log('Data saved successfully to Firestore');
-    } catch (error) {
-      console.error('Failed to save data to Firestore:', error);
-      alert('There was a problem saving your changes. Please try again or check console for errors.');
-    }
-  }
-
-/**
- * Load application data from Firestore
- * @returns {Promise<Object|null>} The loaded app data or null if not found
- */
-async function loadAppData() {
-  try {
-    const doc = await db.collection("appData").doc("mainData").get();
-    
-    if (doc.exists) {
-      console.log('Successfully loaded data from Firestore');
-      return doc.data();
-    } else {
-      console.log('No data found in Firestore');
-      return null;
-    }
-  } catch (error) {
-    console.error('Failed to load data from Firestore:', error);
-    return null;
-  }
 }
