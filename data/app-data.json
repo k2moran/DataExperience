@@ -86,6 +86,58 @@
       ]
     }
   ],
+  "sources": [
+    {
+      "id": "clarity",
+      "name": "Epic Clarity Database",
+      "type": "database",
+      "description": "Clinical data warehouse for Epic EHR system",
+      "technologies": ["SQL", "Oracle"],
+      "dataTypes": ["clinical", "operational"],
+      "associatedPlatforms": ["epic", "tableau"],
+      "accessMethod": "ODBC Connection",
+      "primaryUsers": ["analysts", "clinicians"],
+      "dataGovernance": {
+        "owner": "Clinical Informatics",
+        "sensitivityLevel": "PHI",
+        "refreshFrequency": "Daily"
+      }
+    },
+    {
+      "id": "caboodle",
+      "name": "Caboodle Data Warehouse",
+      "type": "dataWarehouse",
+      "description": "Enterprise-wide data integration platform",
+      "technologies": ["Hadoop", "Snowflake"],
+      "dataTypes": ["administrative", "financial", "research"],
+      "associatedPlatforms": ["denodo", "tableau"],
+      "accessMethod": "API",
+      "primaryUsers": ["analysts", "researchTeams"],
+      "dataGovernance": {
+        "owner": "Enterprise Analytics",
+        "sensitivityLevel": "Aggregate",
+        "refreshFrequency": "Hourly"
+      }
+    }
+  ],
+  "constants": {
+    "sourceTypes": [
+      "database",
+      "dataWarehouse", 
+      "API", 
+      "fileSystem",
+      "externalSystem"
+    ],
+    "dataAccessMethods": [
+      "ODBC Connection",
+      "REST API",
+      "SFTP",
+      "Direct Query",
+      "Batch Export"
+    ]
+  }
+}
+
   "constants": {
     "capabilityLevels": {
       "1": "Novice - Basic awareness only",
