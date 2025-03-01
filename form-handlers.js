@@ -1,0 +1,546 @@
+/**
+ * Form handling functions for the Data Experience Knowledge Center
+ */
+
+/**
+ * Helper for adding dynamic inputs (capabilities, pain points, etc.)
+ * @param {string} containerId - ID of the container element
+ * @param {string} inputName - Name attribute for the input
+ * @param {string} placeholder - Placeholder text for the input
+ */
+function addDynamicInput(containerId, inputName, placeholder) {
+  const container = document.getElementById(containerId);
+  const newRow = document.createElement('div');
+  newRow.className = 'dynamic-input-row';
+  
+  newRow.innerHTML = `
+    <input type="text" name="${inputName}" placeholder="${placeholder}" required>
+    <button type="button" class="remove-btn">×</button>
+  `;
+  
+  container.appendChild(newRow);
+  
+  // Add event listener to the new remove button
+  newRow.querySelector('.remove-btn').addEventListener('click', function() {
+    container.removeChild(newRow);
+  });
+}
+
+/**
+ * Setup dynamic input remove buttons
+ */
+function setupDynamicInputs() {
+  document.querySelectorAll('.remove-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const row = this.parentNode;
+      const container = row.parentNode;
+      container.removeChild(row);
+    });
+  });
+}
+
+/**
+ * Add journey step to form
+ */
+function addJourneyStep() {
+  const container = document.getElementById('stepsContainer');
+  const stepCount = container.querySelectorAll('.journey-step-input').length + 1;
+  
+  const newStep = document.createElement('div');
+  newStep.className = 'journey-step-input';
+  newStep.dataset.index = stepCount - 1;
+  
+  newStep.innerHTML = `
+    <h4>Step ${stepCount}</h4>
+    
+    <div class="form-group">
+      <label>Platform (optional):</label>
+      <select class="platform-select">
+        <option value="">-- No Platform --</option>
+        ${appData.platforms.map(p => `
+          <option value="${p.id}">${p.name}</option>
+        `).join('')}
+      </select>
+    </div>
+    
+    <div class="form-group">
+      <label>Action:</label>
+      <input type="text" class="step-action" required>
+    </div>
+    
+    <div class="form-group">
+      <label>Pain Points:</label>
+      <div class="pain-points-container dynamic-inputs">
+        <div class="dynamic-input-row">
+          <input type="text" name="stepPainPoint" placeholder="Enter pain point">
+          <button type="button" class="remove-btn">×</button>
+        </div>
+      </div>
+      <button type="button" class="add-input-btn" onclick="addStepPainPoint(this)">+ Add Pain Point</button>
+    </div>
+  `;
+  
+  container.appendChild(newStep);
+  
+  // Setup dynamic input remove buttons
+  setupDynamicInputs();
+}
+
+/**
+ * Add pain point to journey step
+ * @param {HTMLElement} btn - Button element that was clicked
+ */
+function addStepPainPoint(btn) {
+  const container = btn.previousElementSibling;
+  const newRow = document.createElement('div');
+  newRow.className = 'dynamic-input-row';
+  
+  newRow.innerHTML = `
+    <input type="text" name="stepPainPoint" placeholder="Enter pain point">
+    <button type="button" class="remove-btn">×</button>
+  `;
+  
+  container.appendChild(newRow);
+  
+  // Add event listener to the new remove button
+  newRow.querySelector('.remove-btn').addEventListener('click', function() {
+    container.removeChild(newRow);
+  });
+}
+
+/**
+ * Handle Add Platform form submission
+ * @param {Event} e - Form submit event
+ */
+function handleAddPlatformSubmit(e) {
+  e.preventDefault();
+  
+  // Get form values
+  const id = document.getElementById('platformId').value.trim();
+  const name = document.getElementById('platformName').value.trim();
+  const description = document.getElementById('platformDescription').value.trim();
+  
+  // Get capabilities
+  const capabilities = [];
+  document.querySelectorAll('#capabilitiesContainer input[name="capability"]').forEach(input => {
+    const value = input.value.trim();
+    if (value) capabilities.push(value);
+  });
+  
+  // Get integrations
+  const integrations = [];
+  document.querySelectorAll('#integrationsContainer input[name="integration"]').forEach(input => {
+    const value = input.value.trim();
+    if (value) integrations.push(value);
+  });
+  
+  // Validate ID uniqueness
+  if (appData.platforms.some(p => p.id === id)) {
+    alert('Platform ID already exists. Please choose a unique ID.');
+    return;
+  }
+  
+  // Create new platform
+  const newPlatform = {
+    id,
+    name,
+    description,
+    capabilities,
+    integrations,
+    primaryUsers: [] // Empty initially, will be populated when personas select it
+  };
+  
+  // Add to data
+  appData.platforms.push(newPlatform);
+  
+    /**
+   * Save application data to Firestore
+   */
+  async function saveAppData() {
+    try {
+      await db.collection("appData").doc("mainData").set(appData);
+      console.log('Data saved successfully to Firestore');
+    } catch (error) {
+      console.error('Failed to save data to Firestore:', error);
+      alert('There was a problem saving your changes. Please try again or check console for errors.');
+    }
+  }
+  
+  // Close modal and refresh view
+  closeModal();
+  setActiveView('platforms');
+  selectedPlatform = id;
+  renderContent();
+}
+
+/**
+ * Handle Add Persona form submission
+ * @param {Event} e - Form submit event
+ */
+function handleAddPersonaSubmit(e) {
+  e.preventDefault();
+  
+  // Get form values
+  const id = document.getElementById('personaId').value.trim();
+  const name = document.getElementById('personaName').value.trim();
+  const role = document.getElementById('personaRole').value.trim();
+  
+  // Get capabilities
+  const capabilities = {};
+  appData.constants.standardCapabilityTypes.forEach(capability => {
+    const slider = document.querySelector(`input[name="${capability}"]`);
+    capabilities[capability] = parseInt(slider.value);
+  });
+  
+  // Get pain points
+  const painPoints = [];
+  document.querySelectorAll('#painPointsContainer input[name="painPoint"]').forEach(input => {
+    const value = input.value.trim();
+    if (value) painPoints.push(value);
+  });
+  
+  // Get primary platforms
+  const platformsSelect = document.getElementById('platformsSelect');
+  const primaryPlatforms = Array.from(platformsSelect.selectedOptions).map(option => option.value);
+  
+  // Validate ID uniqueness
+  if (appData.personas.some(p => p.id === id)) {
+    alert('Persona ID already exists. Please choose a unique ID.');
+    return;
+  }
+  
+  // Create new persona
+  const newPersona = {
+    id,
+    name,
+    role,
+    capabilities,
+    painPoints,
+    primaryPlatforms
+  };
+  
+  // Add to data
+  appData.personas.push(newPersona);
+  
+  // Save the data
+  saveAppData();
+  
+  // Close modal and refresh view
+  closeModal();
+  setActiveView('personas');
+  selectedPersona = id;
+  renderContent();
+}
+
+/**
+ * Handle Add Journey form submission
+ * @param {Event} e - Form submit event
+ */
+function handleAddJourneySubmit(e) {
+  e.preventDefault();
+  
+  // Get form values
+  const id = document.getElementById('journeyId').value.trim();
+  const name = document.getElementById('journeyName').value.trim();
+  const persona = document.getElementById('personaSelect').value;
+  
+  // Get steps
+  const steps = [];
+  document.querySelectorAll('.journey-step-input').forEach(stepEl => {
+    const platform = stepEl.querySelector('.platform-select').value || null;
+    const action = stepEl.querySelector('.step-action').value.trim();
+    
+    // Get pain points
+    const painPoints = [];
+    stepEl.querySelectorAll('input[name="stepPainPoint"]').forEach(input => {
+      const value = input.value.trim();
+      if (value) painPoints.push(value);
+    });
+    
+    const step = {
+      action
+    };
+    
+    if (platform) step.platform = platform;
+    if (painPoints.length > 0) step.painPoints = painPoints;
+    
+    steps.push(step);
+  });
+  
+  // Validate ID uniqueness
+  if (appData.journeys.some(j => j.id === id)) {
+    alert('Journey ID already exists. Please choose a unique ID.');
+    return;
+  }
+  
+  // Create new journey
+  const newJourney = {
+    id,
+    name,
+    persona,
+    steps
+  };
+  
+  // Add to data
+  appData.journeys.push(newJourney);
+  
+  // Save the data
+  saveAppData();
+  
+  // Close modal and refresh view
+  closeModal();
+  setActiveView('journeys');
+  selectedJourney = id;
+  renderContent();
+}
+
+/**
+ * Handle Edit Platform form submission
+ * @param {Event} e - Form submit event
+ */
+function handleEditPlatformSubmit(e) {
+  e.preventDefault();
+  
+  const originalId = document.getElementById('originalPlatformId').value;
+  const id = document.getElementById('platformId').value.trim();
+  const name = document.getElementById('platformName').value.trim();
+  const description = document.getElementById('platformDescription').value.trim();
+  
+  // Get capabilities
+  const capabilities = [];
+  document.querySelectorAll('#capabilitiesContainer input[name="capability"]').forEach(input => {
+    const value = input.value.trim();
+    if (value) capabilities.push(value);
+  });
+  
+  // Get integrations
+  const integrations = [];
+  document.querySelectorAll('#integrationsContainer input[name="integration"]').forEach(input => {
+    const value = input.value.trim();
+    if (value) integrations.push(value);
+  });
+  
+  // Validate ID uniqueness if changed
+  if (id !== originalId && appData.platforms.some(p => p.id === id)) {
+    alert('Platform ID already exists. Please choose a unique ID.');
+    return;
+  }
+  
+  // Find the platform to update
+  const platformIndex = appData.platforms.findIndex(p => p.id === originalId);
+  if (platformIndex === -1) return;
+  
+  // Keep track of the original ID for reference updates
+  const oldId = appData.platforms[platformIndex].id;
+  
+  // Update platform data
+  appData.platforms[platformIndex] = {
+    ...appData.platforms[platformIndex],
+    id,
+    name,
+    description,
+    capabilities,
+    integrations
+  };
+  
+  // Update references if ID changed
+  if (id !== oldId) {
+    // Update integration references in other platforms
+    appData.platforms.forEach(p => {
+      if (p.id !== id) { // Skip the platform we just updated
+        p.integrations = p.integrations.map(i => i === oldId ? id : i);
+      }
+    });
+    
+    // Update platform references in personas
+    appData.personas.forEach(p => {
+      p.primaryPlatforms = p.primaryPlatforms.map(plat => plat === oldId ? id : plat);
+    });
+    
+    // Update platform references in journey steps
+    appData.journeys.forEach(j => {
+      j.steps.forEach(step => {
+        if (step.platform === oldId) {
+          step.platform = id;
+        }
+      });
+    });
+  }
+  
+  // Save the data
+  saveAppData();
+  
+  // Close modal and refresh view
+  closeModal();
+  selectedPlatform = id;
+  renderContent();
+}
+
+/**
+ * Handle Edit Persona form submission
+ * @param {Event} e - Form submit event
+ */
+function handleEditPersonaSubmit(e) {
+  e.preventDefault();
+  
+  const originalId = document.getElementById('originalPersonaId').value;
+  const id = document.getElementById('personaId').value.trim();
+  const name = document.getElementById('personaName').value.trim();
+  const role = document.getElementById('personaRole').value.trim();
+  
+  // Get capabilities
+  const capabilities = {};
+  appData.constants.standardCapabilityTypes.forEach(capability => {
+    const slider = document.querySelector(`input[name="${capability}"]`);
+    capabilities[capability] = parseInt(slider.value);
+  });
+  
+  // Get pain points
+  const painPoints = [];
+  document.querySelectorAll('#painPointsContainer input[name="painPoint"]').forEach(input => {
+    const value = input.value.trim();
+    if (value) painPoints.push(value);
+  });
+  
+  // Get primary platforms
+  const platformsSelect = document.getElementById('platformsSelect');
+  const primaryPlatforms = Array.from(platformsSelect.selectedOptions).map(option => option.value);
+  
+  // Validate ID uniqueness if changed
+  if (id !== originalId && appData.personas.some(p => p.id === id)) {
+    alert('Persona ID already exists. Please choose a unique ID.');
+    return;
+  }
+  
+  // Find the persona to update
+  const personaIndex = appData.personas.findIndex(p => p.id === originalId);
+  if (personaIndex === -1) return;
+  
+  // Keep track of the original ID for reference updates
+  const oldId = appData.personas[personaIndex].id;
+  
+  // Update persona data
+  appData.personas[personaIndex] = {
+    ...appData.personas[personaIndex],
+    id,
+    name,
+    role,
+    capabilities,
+    painPoints,
+    primaryPlatforms
+  };
+  
+  // Update references if ID changed
+  if (id !== oldId) {
+    // Update persona references in journeys
+    appData.journeys.forEach(j => {
+      if (j.persona === oldId) {
+        j.persona = id;
+      }
+    });
+  }
+  
+  // Save the data
+  saveAppData();
+  
+  // Close modal and refresh view
+  closeModal();
+  selectedPersona = id;
+  renderContent();
+}
+
+/**
+ * Handle Edit Journey form submission
+ * @param {Event} e - Form submit event
+ */
+function handleEditJourneySubmit(e) {
+  e.preventDefault();
+  
+  const originalId = document.getElementById('originalJourneyId').value;
+  const id = document.getElementById('journeyId').value.trim();
+  const name = document.getElementById('journeyName').value.trim();
+  const persona = document.getElementById('personaSelect').value;
+  
+  // Get steps
+  const steps = [];
+  document.querySelectorAll('.journey-step-input').forEach(stepEl => {
+    const platform = stepEl.querySelector('.platform-select').value || null;
+    const action = stepEl.querySelector('.step-action').value.trim();
+    
+    // Get pain points
+    const painPoints = [];
+    stepEl.querySelectorAll('input[name="stepPainPoint"]').forEach(input => {
+      const value = input.value.trim();
+      if (value) painPoints.push(value);
+    });
+    
+    const step = {
+      action
+    };
+    
+    if (platform) step.platform = platform;
+    if (painPoints.length > 0) step.painPoints = painPoints;
+    
+    steps.push(step);
+  });
+  
+  // Validate ID uniqueness if changed
+  if (id !== originalId && appData.journeys.some(j => j.id === id)) {
+    alert('Journey ID already exists. Please choose a unique ID.');
+    return;
+  }
+  
+  // Find the journey to update
+  const journeyIndex = appData.journeys.findIndex(j => j.id === originalId);
+  if (journeyIndex === -1) return;
+  
+  // Update journey data
+  appData.journeys[journeyIndex] = {
+    ...appData.journeys[journeyIndex],
+    id,
+    name,
+    persona,
+    steps
+  };
+  
+  // Save the data
+  saveAppData();
+  
+  // Close modal and refresh view
+  closeModal();
+  selectedJourney = id;
+  renderContent();
+}
+
+/**
+ * Save application data to localStorage
+ */
+function saveAppData() {
+  try {
+    localStorage.setItem('dataExperienceAppData', JSON.stringify(appData));
+  } catch (error) {
+    console.error('Failed to save data:', error);
+    alert('There was a problem saving your changes. Please try again or check console for errors.');
+  }
+}
+
+/**
+ * Load application data from Firestore
+ * @returns {Promise<Object|null>} The loaded app data or null if not found
+ */
+async function loadAppData() {
+  try {
+    const doc = await db.collection("appData").doc("mainData").get();
+    
+    if (doc.exists) {
+      console.log('Successfully loaded data from Firestore');
+      return doc.data();
+    } else {
+      console.log('No data found in Firestore');
+      return null;
+    }
+  } catch (error) {
+    console.error('Failed to load data from Firestore:', error);
+    return null;
+  }
+}

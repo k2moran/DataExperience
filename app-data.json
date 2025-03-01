@@ -1,0 +1,105 @@
+{
+  "platforms": [
+    {
+      "id": "tableau",
+      "name": "Tableau Server",
+      "description": "Enterprise visualization platform",
+      "capabilities": ["dashboarding", "data exploration", "self-service"],
+      "integrations": ["epic", "denodo"],
+      "primaryUsers": ["analysts", "operationalLeaders"]
+    },
+    {
+      "id": "epic",
+      "name": "Epic Reporting",
+      "description": "Clinical system reporting modules",
+      "capabilities": ["operational reporting", "clinical metrics"],
+      "integrations": ["tableau"],
+      "primaryUsers": ["clinicians", "operationalLeaders"]
+    },
+    {
+      "id": "denodo",
+      "name": "Denodo Data Virtualization",
+      "description": "Logical data platform",
+      "capabilities": ["data integration", "API services"],
+      "integrations": ["tableau", "dataCatalog"],
+      "primaryUsers": ["analysts", "dataStewards"]
+    }
+  ],
+  "personas": [
+    {
+      "id": "operationalLeader",
+      "name": "Clinical Operations Leader",
+      "role": "Department Chair/Director",
+      "capabilities": {
+        "dataVisualization": 3,
+        "dataAnalysis": 2,
+        "selfService": 1,
+        "dataSystems": 1,
+        "dataQuality": 2
+      },
+      "painPoints": [
+        "Inconsistent metrics across systems",
+        "Limited self-service capabilities",
+        "Difficulty articulating data needs"
+      ],
+      "primaryPlatforms": ["tableau", "epic"]
+    },
+    {
+      "id": "analyst",
+      "name": "Data Analyst",
+      "role": "Analytics Team Member",
+      "capabilities": {
+        "dataVisualization": 4,
+        "dataAnalysis": 5,
+        "selfService": 4,
+        "dataSystems": 3,
+        "dataQuality": 4
+      },
+      "painPoints": [
+        "Data access limitations",
+        "Manual data reconciliation",
+        "Frequently changing requirements"
+      ],
+      "primaryPlatforms": ["tableau", "denodo"]
+    }
+  ],
+  "journeys": [
+    {
+      "id": "performanceMetrics",
+      "name": "Monthly Performance Review",
+      "persona": "operationalLeader",
+      "steps": [
+        {
+          "platform": "epic",
+          "action": "Reviews standard operational reports",
+          "painPoints": ["Limited trend visibility", "No financial integration"]
+        },
+        {
+          "platform": "tableau",
+          "action": "Examines KPI dashboard",
+          "painPoints": ["Cannot reconcile with Epic metrics", "Limited drill-down"]
+        },
+        {
+          "action": "Requests ad-hoc analysis",
+          "painPoints": ["Long turnaround time", "Requirements miscommunication"]
+        }
+      ]
+    }
+  ],
+  "constants": {
+    "capabilityLevels": {
+      "1": "Novice - Basic awareness only",
+      "2": "Basic - Can use with guidance",
+      "3": "Intermediate - Independent with common tasks",
+      "4": "Advanced - Can perform complex operations",
+      "5": "Expert - Can train others, deep expertise"
+    },
+    "standardCapabilityTypes": [
+      "dataVisualization",
+      "dataAnalysis",
+      "selfService",
+      "dataSystems",
+      "dataQuality"
+    ]
+  }
+}

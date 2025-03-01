@@ -1,0 +1,350 @@
+/**
+ * Rendering functions for the Data Experience Knowledge Center
+ */
+
+/**
+ * Main render function to determine what to display
+ */
+function renderContent() {
+  switch(activeView) {
+    case 'overview':
+      renderOverview();
+      break;
+    case 'platforms':
+      renderPlatformDetail();
+      break;
+    case 'personas':
+      renderPersonaDetail();
+      break;
+    case 'journeys':
+      renderJourneyDetail();
+      break;
+  }
+}
+
+/**
+ * Render the overview dashboard
+ */
+function renderOverview() {
+  let html = `
+    <div class="grid">
+      <div class="card">
+        <div class="section-header">
+          <h2>Platforms</h2>
+          <button class="add-new-btn" onclick="openAddPlatformModal()">+ Add Platform</button>
+        </div>
+        <div class="platform-list">
+          ${appData.platforms.map(platform => `
+            <div class="item" onclick="selectPlatform('${platform.id}')">
+              <div class="item-title">${platform.name}</div>
+              <div class="item-subtitle">${platform.description}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="section-header">
+          <h2>User Personas</h2>
+          <button class="add-new-btn" onclick="openAddPersonaModal()">+ Add Persona</button>
+        </div>
+        <div class="persona-list">
+          ${appData.personas.map(persona => `
+            <div class="item" onclick="selectPersona('${persona.id}')">
+              <div class="item-title">${persona.name}</div>
+              <div class="item-subtitle">${persona.role}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="section-header">
+          <h2>User Journeys</h2>
+          <button class="add-new-btn" onclick="openAddJourneyModal()">+ Add Journey</button>
+        </div>
+        <div class="journey-list">
+          ${appData.journeys.map(journey => {
+            const persona = appData.personas.find(p => p.id === journey.persona);
+            return `
+              <div class="item" onclick="selectJourney('${journey.id}')">
+                <div class="item-title">${journey.name}</div>
+                <div class="item-subtitle">${persona ? persona.name : 'Unknown persona'}</div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+  
+  mainContent.innerHTML = html;
+}
+
+/**
+ * Render platform detail view
+ */
+function renderPlatformDetail() {
+  if (!selectedPlatform) {
+    mainContent.innerHTML = `
+      <div class="card">
+        <div class="section-header">
+          <h2>Platforms</h2>
+          <button class="add-new-btn" onclick="openAddPlatformModal()">+ Add Platform</button>
+        </div>
+        <p>Select a platform to view details</p>
+        <div class="platform-list">
+          ${appData.platforms.map(platform => `
+            <div class="item" onclick="selectPlatform('${platform.id}')">
+              <div class="item-title">${platform.name}</div>
+              <div class="item-subtitle">${platform.description}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+    return;
+  }
+  
+  const platform = appData.platforms.find(p => p.id === selectedPlatform);
+  if (!platform) {
+    mainContent.innerHTML = '<p>Platform not found</p>';
+    return;
+  }
+  
+  const usedByPersonas = appData.personas.filter(p => 
+    p.primaryPlatforms.includes(platform.id)
+  );
+  
+  const journeysUsingPlatform = appData.journeys.filter(j => 
+    j.steps.some(s => s.platform === platform.id)
+  );
+  
+  let html = `
+    <div class="card">
+      <div class="section-header">
+        <h2>${platform.name}</h2>
+        <button class="add-new-btn" onclick="openEditPlatformModal('${platform.id}')">Edit Platform</button>
+      </div>
+      <p>${platform.description}</p>
+      
+      <h3>Capabilities</h3>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px;">
+        ${platform.capabilities.map(cap => `
+          <span class="tag tag-blue">${cap}</span>
+        `).join('')}
+      </div>
+      
+      <h3>Integrates With</h3>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px;">
+        ${platform.integrations.map(int => {
+          const intPlatform = appData.platforms.find(p => p.id === int);
+          return `
+            <span class="tag tag-purple" onclick="selectPlatform('${int}')" style="cursor: pointer;">
+              ${intPlatform ? intPlatform.name : int}
+            </span>
+          `;
+        }).join('')}
+      </div>
+      
+      <h3>Used By</h3>
+      <div class="grid" style="margin-bottom: 15px;">
+        ${usedByPersonas.map(persona => `
+          <div class="item" onclick="selectPersona('${persona.id}')">
+            <div class="item-title">${persona.name}</div>
+            <div class="item-subtitle">${persona.role}</div>
+          </div>
+        `).join('')}
+      </div>
+      
+      <h3>User Journeys</h3>
+      <div>
+        ${journeysUsingPlatform.map(journey => `
+          <div class="item" onclick="selectJourney('${journey.id}')">
+            <div class="item-title">${journey.name}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+  
+  mainContent.innerHTML = html;
+}
+
+/**
+ * Render persona detail view
+ */
+function renderPersonaDetail() {
+  if (!selectedPersona) {
+    mainContent.innerHTML = `
+      <div class="card">
+        <div class="section-header">
+          <h2>Personas</h2>
+          <button class="add-new-btn" onclick="openAddPersonaModal()">+ Add Persona</button>
+        </div>
+        <p>Select a persona to view details</p>
+        <div class="persona-list">
+          ${appData.personas.map(persona => `
+            <div class="item" onclick="selectPersona('${persona.id}')">
+              <div class="item-title">${persona.name}</div>
+              <div class="item-subtitle">${persona.role}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+    return;
+  }
+  
+  const persona = appData.personas.find(p => p.id === selectedPersona);
+  if (!persona) {
+    mainContent.innerHTML = '<p>Persona not found</p>';
+    return;
+  }
+  
+  const usedPlatforms = appData.platforms.filter(p => 
+    persona.primaryPlatforms.includes(p.id)
+  );
+  
+  const personaJourneys = appData.journeys.filter(j => 
+    j.persona === persona.id
+  );
+  
+  let html = `
+    <div class="card">
+      <div class="section-header">
+        <h2>${persona.name}</h2>
+        <button class="add-new-btn" onclick="openEditPersonaModal('${persona.id}')">Edit Persona</button>
+      </div>
+      <p style="color: #666; margin-bottom: 20px;">${persona.role}</p>
+      
+      <h3>Capability Assessment</h3>
+      <div style="margin-bottom: 20px;">
+        ${Object.entries(persona.capabilities).map(([capability, level]) => `
+          <div class="capability-grid">
+            <div class="capability-name">${capability.replace(/([A-Z])/g, ' $1').trim()}</div>
+            <div class="capability-level level-${level}">${level}</div>
+            <div style="font-size: 14px; color: #666;">${appData.constants.capabilityLevels[level]}</div>
+          </div>
+        `).join('')}
+      </div>
+      
+      <h3>Pain Points</h3>
+      <ul class="pain-point-list">
+        ${persona.painPoints.map(point => `<li>${point}</li>`).join('')}
+      </ul>
+      
+      <h3>Primary Platforms</h3>
+      <div class="grid" style="margin-bottom: 20px;">
+        ${usedPlatforms.map(platform => `
+          <div class="item" onclick="selectPlatform('${platform.id}')">
+            <div class="item-title">${platform.name}</div>
+            <div class="item-subtitle">${platform.description}</div>
+          </div>
+        `).join('')}
+      </div>
+      
+      <h3>User Journeys</h3>
+      ${personaJourneys.length > 0 ? `
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          ${personaJourneys.map(journey => `
+            <div class="item" onclick="selectJourney('${journey.id}')">
+              <div class="item-title">${journey.name}</div>
+            </div>
+          `).join('')}
+        </div>
+      ` : `
+        <p style="color: #666; font-style: italic;">No journeys mapped yet</p>
+      `}
+    </div>
+  `;
+  
+  mainContent.innerHTML = html;
+}
+
+/**
+ * Render journey detail view
+ */
+function renderJourneyDetail() {
+  if (!selectedJourney) {
+    mainContent.innerHTML = `
+      <div class="card">
+        <div class="section-header">
+          <h2>User Journeys</h2>
+          <button class="add-new-btn" onclick="openAddJourneyModal()">+ Add Journey</button>
+        </div>
+        <p>Select a journey to view details</p>
+        <div class="journey-list">
+          ${appData.journeys.map(journey => {
+            const persona = appData.personas.find(p => p.id === journey.persona);
+            return `
+              <div class="item" onclick="selectJourney('${journey.id}')">
+                <div class="item-title">${journey.name}</div>
+                <div class="item-subtitle">${persona ? persona.name : 'Unknown persona'}</div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+    return;
+  }
+  
+  const journey = appData.journeys.find(j => j.id === selectedJourney);
+  if (!journey) {
+    mainContent.innerHTML = '<p>Journey not found</p>';
+    return;
+  }
+  
+  const persona = appData.personas.find(p => p.id === journey.persona);
+  
+  let html = `
+    <div class="card">
+      <div class="section-header">
+        <h2>${journey.name}</h2>
+        <button class="add-new-btn" onclick="openEditJourneyModal('${journey.id}')">Edit Journey</button>
+      </div>
+      
+      ${persona ? `
+        <div style="margin-bottom: 20px;">
+          <span>Primary Persona: </span>
+          <a href="#" onclick="selectPersona('${persona.id}'); return false;" style="color: #2563eb; text-decoration: none;">
+            ${persona.name}
+          </a>
+        </div>
+      ` : ''}
+      
+      <h3>Journey Steps</h3>
+      <div style="margin-top: 15px;">
+        ${journey.steps.map((step, idx) => {
+          const platform = step.platform ? 
+            appData.platforms.find(p => p.id === step.platform) : null;
+          
+          return `
+            <div class="journey-step">
+              <div class="step-header">
+                <span class="tag tag-blue">Step ${idx + 1}</span>
+                ${platform ? `
+                  <span class="tag tag-purple" onclick="selectPlatform('${platform.id}')" style="cursor: pointer;">
+                    ${platform.name}
+                  </span>
+                ` : ''}
+              </div>
+              <p style="font-weight: 500; margin-bottom: 5px;">${step.action}</p>
+              ${step.painPoints && step.painPoints.length > 0 ? `
+                <div class="step-pain-points">
+                  <span class="step-pain-points-title">Pain Points:</span>
+                  <ul class="step-pain-points-list">
+                    ${step.painPoints.map(point => `<li>${point}</li>`).join('')}
+                  </ul>
+                </div>
+              ` : ''}
+            </div>
+          `;
+        }).join('')}
+      </div>
+    </div>
+  `;
+  
+  mainContent.innerHTML = html;
+}
