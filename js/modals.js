@@ -387,6 +387,71 @@ function openAddJourneyModal() {
 }
 
 /**
+ * Open the Edit Source modal dialog
+ * @param {string} sourceId - ID of the source to edit
+ */
+function openEditSourceModal(sourceId) {
+  const source = appData.sources.find(s => s.id === sourceId);
+  if (!source) return;
+  
+  // Populate the form with the source data
+  document.getElementById('originalSourceId').value = source.id;
+  document.getElementById('sourceId').value = source.id;
+  document.getElementById('sourceName').value = source.name;
+  document.getElementById('sourceDescription').value = source.description;
+  document.getElementById('sourceType').value = source.type;
+  document.getElementById('accessMethod').value = source.accessMethod;
+  
+  // Populate technologies
+  const technologiesContainer = document.getElementById('technologiesContainer');
+  technologiesContainer.innerHTML = '';
+  source.technologies.forEach(tech => {
+    const newRow = document.createElement('div');
+    newRow.className = 'dynamic-input-row';
+    newRow.innerHTML = `
+      <input type="text" name="technology" value="${tech}" placeholder="Enter technology" required>
+      <button type="button" class="remove-btn">×</button>
+    `;
+    technologiesContainer.appendChild(newRow);
+  });
+  
+  // Populate data types
+  const dataTypesContainer = document.getElementById('dataTypesContainer');
+  dataTypesContainer.innerHTML = '';
+  source.dataTypes.forEach(type => {
+    const newRow = document.createElement('div');
+    newRow.className = 'dynamic-input-row';
+    newRow.innerHTML = `
+      <input type="text" name="dataType" value="${type}" placeholder="Enter data type" required>
+      <button type="button" class="remove-btn">×</button>
+    `;
+    dataTypesContainer.appendChild(newRow);
+  });
+  
+  // Populate associated platforms
+  const platformsSelect = document.getElementById('platformsSelect');
+  platformsSelect.innerHTML = appData.platforms.map(p => `
+    <option value="${p.id}" ${source.associatedPlatforms.includes(p.id) ? 'selected' : ''}>${p.name}</option>
+  `).join('');
+  
+  // Populate governance details
+  document.getElementById('governanceOwner').value = source.dataGovernance.owner;
+  document.getElementById('sensitivityLevel').value = source.dataGovernance.sensitivityLevel;
+  document.getElementById('refreshFrequency').value = source.dataGovernance.refreshFrequency;
+  
+  openModal();
+  
+  // Add event listeners to dynamic buttons
+  setupDynamicInputs();
+  
+  // Form submission
+  document.getElementById('editSourceForm').addEventListener('submit', handleEditSourceSubmit);
+}
+
+
+
+
+/**
  * Open the Edit Platform modal dialog
  * @param {string} platformId - ID of the platform to edit
  */
