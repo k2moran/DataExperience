@@ -404,7 +404,7 @@ function renderSourceDetail() {
     source.associatedPlatforms.includes(p.id)
   );
   
-  let html = `
+ let html = `
     <div class="card">
       <div class="section-header">
         <h2>${source.name}</h2>
@@ -412,10 +412,6 @@ function renderSourceDetail() {
       </div>
       
       <p>${source.description}</p>
-      
-      // Rest of your existing HTML
-    </div>
-  `;
       
       <div class="grid">
         <div>
