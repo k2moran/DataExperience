@@ -30,6 +30,21 @@ function renderContent() {
  */
 function renderOverview() {
   let html = `
+     <div class="card">
+        <div class="section-header">
+          <h2>Data Sources</h2>
+          <button class="add-new-btn" onclick="openAddSourceModal()">+ Add Source</button>
+        </div>
+        <div class="source-list">
+          ${appData.sources.map(source => `
+            <div class="item" onclick="selectSource('${source.id}')">
+              <div class="item-title">${source.name}</div>
+              <div class="item-subtitle">${source.type}</div>
+            </div>
+         `).join('')}
+        </div>
+      </div>
+    
     <div class="grid">
       <div class="card">
         <div class="section-header">
