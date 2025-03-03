@@ -25,7 +25,19 @@ async function loadAppData() {
     
     if (doc.exists) {
       console.log('Successfully loaded data from Firestore');
-      return doc.data();
+      const data = doc.data();
+      
+      // Log the exact structure of the retrieved data
+      console.log('Retrieved Firestore data:', JSON.stringify(data, null, 2));
+      
+      // Ensure all required arrays exist
+      if (!data.sources) data.sources = [];
+      if (!data.platforms) data.platforms = [];
+      if (!data.personas) data.personas = [];
+      if (!data.journeys) data.journeys = [];
+      if (!data.constants) data.constants = {};
+      
+      return data;
     } else {
       console.log('No data found in Firestore');
       return null;
@@ -35,6 +47,26 @@ async function loadAppData() {
     return null;
   }
 }
+
+async function saveAppData() {
+  try {
+    // Ensure all required properties exist
+    const dataToSave = {
+      sources: appData.sources || [],
+      platforms: appData.platforms || [],
+      personas: appData.personas || [],
+      journeys: appData.journeys || [],
+      constants: appData.constants || {}
+    };
+
+    await db.collection("appData").doc("mainData").set(dataToSave);
+    console.log('Data saved successfully to Firestore');
+  } catch (error) {
+    console.error('Failed to save data to Firestore:', error);
+    alert('There was a problem saving your changes. Please try again or check console for errors.');
+  }
+}
+
 
 /**
  * Helper for adding dynamic inputs (capabilities, pain points, etc.)
