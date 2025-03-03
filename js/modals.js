@@ -131,7 +131,7 @@ openModal();
   setupDynamicInputs();
   
   // Form submission
-  document.getElementById('addSourcesForm').addEventListener('submit', handleAddSourcesSubmit);
+  document.getElementById('addSourceForm').addEventListener('submit', handleAddSourceSubmit);
 }
 
 
