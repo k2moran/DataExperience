@@ -19,6 +19,9 @@ function renderContent() {
     case 'journeys':
       renderJourneyDetail();
       break;
+    case 'sources':
+      renderSourceDetail();
+      break;
   }
 }
 
