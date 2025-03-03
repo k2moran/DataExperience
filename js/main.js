@@ -49,8 +49,21 @@ async function initializeApp() {
       
       appData = await response.json();
       
+      // Ensure sources exists
+      if (!appData.sources) {
+        appData.sources = [];
+      }
+      
       // Save the initial data to Firestore
       await saveAppData();
+    }
+
+    // Additional validation
+    console.log('Loaded appData:', appData);
+    
+    // Ensure sources array exists before rendering
+    if (!Array.isArray(appData.sources)) {
+      appData.sources = [];
     }
     
     // Set up event listeners
@@ -65,6 +78,7 @@ async function initializeApp() {
         <h2>Error Loading Application</h2>
         <p>There was a problem loading the application data. Please try refreshing the page.</p>
         <p>Error details: ${error.message}</p>
+        <pre>${error.stack}</pre>
       </div>
     `;
   }
