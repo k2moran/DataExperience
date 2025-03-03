@@ -10,6 +10,9 @@ function renderContent() {
     case 'overview':
       renderOverview();
       break;
+    case 'sources':
+      renderSourceDetail();
+      break;
     case 'platforms':
       renderPlatformDetail();
       break;
@@ -18,9 +21,6 @@ function renderContent() {
       break;
     case 'journeys':
       renderJourneyDetail();
-      break;
-    case 'sources':
-      renderSourceDetail();
       break;
   }
 }
