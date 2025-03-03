@@ -74,6 +74,88 @@ function setupDynamicInputs() {
 }
 
 /**
+ * Handle Add Source form submission
+ * @param {Event} e - Form submit event
+ */
+function handleAddSourceSubmit(e) {
+  e.preventDefault();
+  
+  // Get form values
+  const id = document.getElementById('sourceId').value.trim();
+  const name = document.getElementById('sourceName').value.trim();
+  const description = document.getElementById('sourceDescription').value.trim();
+  const sourceType = document.getElementById('sourceType').value.trim();
+  const accessMethod = document.getElementById('accessMethod').value.trim();
+  
+  // Get technologies
+  const technologies = [];
+  document.querySelectorAll('#technologiesContainer input[name="technology"]').forEach(input => {
+    const value = input.value.trim();
+    if (value) technologies.push(value);
+  });
+  
+  // Get data types
+  const dataTypes = [];
+  document.querySelectorAll('#dataTypesContainer input[name="dataType"]').forEach(input => {
+    const value = input.value.trim();
+    if (value) dataTypes.push(value);
+  });
+  
+  // Get associated platforms
+  const platformsSelect = document.getElementById('platformsSelect');
+  const associatedPlatforms = Array.from(platformsSelect.selectedOptions).map(option => option.value);
+  
+  // Get governance details
+  const owner = document.getElementById('governanceOwner').value.trim();
+  const sensitivityLevel = document.getElementById('sensitivityLevel').value.trim();
+  const refreshFrequency = document.getElementById('refreshFrequency').value.trim();
+  
+  // Validate ID uniqueness
+  if (appData.sources.some(s => s.id === id)) {
+    alert('Source ID already exists. Please choose a unique ID.');
+    return;
+  }
+  
+  // Create new source
+  const newSource = {
+    id,
+    name,
+    description,
+    type: sourceType,
+    technologies,
+    dataTypes,
+    associatedPlatforms,
+    accessMethod,
+    primaryUsers: [], // can be populated later
+    dataGovernance: {
+      owner,
+      sensitivityLevel,
+      refreshFrequency
+    }
+  };
+  
+  // Add to data
+  appData.sources.push(newSource);
+  
+  // Save the data
+  saveAppData();
+  
+  // Close modal and refresh view
+  closeModal();
+  setActiveView('sources');
+  selectedSource = id;
+  renderContent();
+}
+
+
+
+
+
+
+
+
+
+/**
  * Add journey step to form
  */
 function addJourneyStep() {
@@ -317,6 +399,84 @@ function handleAddJourneySubmit(e) {
   selectedJourney = id;
   renderContent();
 }
+
+/**
+ * Handle Edit Source form submission
+ * @param {Event} e - Form submit event
+ */
+function handleEditSourceSubmit(e) {
+  e.preventDefault();
+  
+  const originalId = document.getElementById('originalSourceId').value;
+  const id = document.getElementById('sourceId').value.trim();
+  const name = document.getElementById('sourceName').value.trim();
+  const description = document.getElementById('sourceDescription').value.trim();
+  const sourceType = document.getElementById('sourceType').value.trim();
+  const accessMethod = document.getElementById('accessMethod').value.trim();
+  
+  // Get technologies
+  const technologies = [];
+  document.querySelectorAll('#technologiesContainer input[name="technology"]').forEach(input => {
+    const value = input.value.trim();
+    if (value) technologies.push(value);
+  });
+  
+  // Get data types
+  const dataTypes = [];
+  document.querySelectorAll('#dataTypesContainer input[name="dataType"]').forEach(input => {
+    const value = input.value.trim();
+    if (value) dataTypes.push(value);
+  });
+  
+  // Get associated platforms
+  const platformsSelect = document.getElementById('platformsSelect');
+  const associatedPlatforms = Array.from(platformsSelect.selectedOptions).map(option => option.value);
+  
+  // Get governance details
+  const owner = document.getElementById('governanceOwner').value.trim();
+  const sensitivityLevel = document.getElementById('sensitivityLevel').value.trim();
+  const refreshFrequency = document.getElementById('refreshFrequency').value.trim();
+  
+  // Validate ID uniqueness if changed
+  if (id !== originalId && appData.sources.some(s => s.id === id)) {
+    alert('Source ID already exists. Please choose a unique ID.');
+    return;
+  }
+  
+  // Find the source to update
+  const sourceIndex = appData.sources.findIndex(s => s.id === originalId);
+  if (sourceIndex === -1) return;
+  
+  // Update source data
+  appData.sources[sourceIndex] = {
+    ...appData.sources[sourceIndex],
+    id,
+    name,
+    description,
+    type: sourceType,
+    technologies,
+    dataTypes,
+    associatedPlatforms,
+    accessMethod,
+    dataGovernance: {
+      owner,
+      sensitivityLevel,
+      refreshFrequency
+    }
+  };
+  
+  // Save the data
+  saveAppData();
+  
+  // Close modal and refresh view
+  closeModal();
+  selectedSource = id;
+  renderContent();
+}
+
+
+
+
 
 /**
  * Handle Edit Platform form submission
