@@ -147,14 +147,6 @@ function handleAddSourceSubmit(e) {
   renderContent();
 }
 
-
-
-
-
-
-
-
-
 /**
  * Add journey step to form
  */
@@ -473,9 +465,6 @@ function handleEditSourceSubmit(e) {
   selectedSource = id;
   renderContent();
 }
-
-
-
 
 
 /**
