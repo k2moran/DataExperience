@@ -139,6 +139,20 @@
 }
 
   "constants": {
+    "sourceTypes": [
+      "database",
+      "dataWarehouse", 
+      "API", 
+      "fileSystem",
+      "externalSystem"
+    ],
+    "dataAccessMethods": [
+      "ODBC Connection",
+      "REST API",
+      "SFTP",
+      "Direct Query",
+      "Batch Export"
+    ],
     "capabilityLevels": {
       "1": "Novice - Basic awareness only",
       "2": "Basic - Can use with guidance",
