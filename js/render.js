@@ -405,7 +405,7 @@ function renderSourceDetail() {
     <div class="card">
       <div class="section-header">
         <h2>${source.name}</h2>
-        <button class="add-new-btn" onclick="SourceModal('${source.id}')">Edit Source</button>
+        </button>class="add-new-btn" onclick="openEditSourceModal('${source.id}')">Edit Source</button>
       </div>
       
       <p>${source.description}</p>
