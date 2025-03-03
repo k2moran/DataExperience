@@ -8,6 +8,7 @@ let activeView = 'overview';
 let selectedPlatform = null;
 let selectedPersona = null;
 let selectedJourney = null;
+let selectedSource = null;  // New state for sources
 
 // DOM elements
 const mainContent = document.getElementById('mainContent');
@@ -15,6 +16,7 @@ const overviewBtn = document.getElementById('overviewBtn');
 const platformsBtn = document.getElementById('platformsBtn');
 const personasBtn = document.getElementById('personasBtn');
 const journeysBtn = document.getElementById('journeysBtn');
+const sourcesBtn = document.getElementById('sourcesBtn');  // New button
 const modalContainer = document.getElementById('modalContainer');
 const modalBody = document.getElementById('modalBody');
 const closeModalBtn = document.querySelector('.close-modal');
@@ -72,12 +74,17 @@ async function initializeApp() {
  * Set up event listeners for the application
  */
 function setupEventListeners() {
-  // Navigation buttons
   overviewBtn.addEventListener('click', () => {
     setActiveView('overview');
     renderContent();
   });
 
+    // Navigation buttons
+  sourcesBtn.addEventListener('click', () => {
+    setActiveView('sources');
+    renderContent();
+  });
+    
   platformsBtn.addEventListener('click', () => {
     setActiveView('platforms');
     renderContent();
@@ -110,13 +117,16 @@ function setActiveView(view) {
   activeView = view;
   
   // Update button states
-  [overviewBtn, platformsBtn, personasBtn, journeysBtn].forEach(btn => {
+  [overviewBtn, sourcesBtn, platformsBtn, personasBtn, journeysBtn].forEach(btn => {
     btn.classList.remove('active');
   });
   
   switch(view) {
     case 'overview':
       overviewBtn.classList.add('active');
+      break;
+    case 'sources':
+      sourcesBtn.classList.add('active');
       break;
     case 'platforms':
       platformsBtn.classList.add('active');
@@ -128,6 +138,16 @@ function setActiveView(view) {
       journeysBtn.classList.add('active');
       break;
   }
+}
+
+/**
+ * Helper function to select a source
+ * @param {string} id - Source ID
+ */
+function selectSource(id) {
+  selectedSource = id;
+  setActiveView('sources');
+  renderContent();
 }
 
 /**
