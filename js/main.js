@@ -5,18 +5,18 @@
 // Application state
 let appData = null;
 let activeView = 'overview';
+let selectedSource = null;  // New state for sources
 let selectedPlatform = null;
 let selectedPersona = null;
 let selectedJourney = null;
-let selectedSource = null;  // New state for sources
 
 // DOM elements
 const mainContent = document.getElementById('mainContent');
 const overviewBtn = document.getElementById('overviewBtn');
+const sourcesBtn = document.getElementById('sourcesBtn');  // New button
 const platformsBtn = document.getElementById('platformsBtn');
 const personasBtn = document.getElementById('personasBtn');
 const journeysBtn = document.getElementById('journeysBtn');
-const sourcesBtn = document.getElementById('sourcesBtn');  // New button
 const modalContainer = document.getElementById('modalContainer');
 const modalBody = document.getElementById('modalBody');
 const closeModalBtn = document.querySelector('.close-modal');
