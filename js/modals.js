@@ -20,118 +20,142 @@ function closeModal() {
  * Open the Add Source modal dialog
  */
 function openAddSourceModal() {
-  const platformOptions = appData.platforms.map(p => `
-    <option value="${p.id}">${p.name}</option>
-  `).join('');
-  
-  modalBody.innerHTML = `
-    <h2>Add New Data Source</h2>
-    <form id="addSourceForm">
-      <div class="form-group">
-        <label for="sourceId">ID (no spaces):</label>
-        <input type="text" id="sourceId" required pattern="[a-zA-Z0-9]+" title="Only letters and numbers, no spaces">
-      </div>
-      
-      <div class="form-group">
-        <label for="sourceName">Name:</label>
-        <input type="text" id="sourceName" required>
-      </div>
-      
-      <div class="form-group">
-        <label for="sourceDescription">Description:</label>
-        <textarea id="sourceDescription" required></textarea>
-      </div>
-      
-      <div class="form-group">
-        <label for="sourceType">Source Type:</label>
-        <select id="sourceType" required>
-          ${appData.constants.sourceTypes.map(type => `
-            <option value="${type}">${type.charAt(0).toUpperCase() + type.slice(1)}</option>
-          `).join('')}
-        </select>
-      </div>
-      
-      <div class="form-group">
-        <label for="accessMethod">Access Method:</label>
-        <select id="accessMethod" required>
-          ${appData.constants.dataAccessMethods.map(method => `
-            <option value="${method}">${method}</option>
-          `).join('')}
-        </select>
-      </div>
-      
-      <div class="form-group">
-        <label>Technologies:</label>
-        <div id="technologiesContainer" class="dynamic-inputs">
-          <div class="dynamic-input-row">
-            <input type="text" name="technology" placeholder="Enter technology" required>
-            <button type="button" class="remove-btn">×</button>
-          </div>
-        </div>
-        <button type="button" class="add-input-btn" onclick="addDynamicInput('technologiesContainer', 'technology', 'Enter technology')">+ Add Technology</button>
-      </div>
-      
-      <div class="form-group">
-        <label>Data Types:</label>
-        <div id="dataTypesContainer" class="dynamic-inputs">
-          <div class="dynamic-input-row">
-            <input type="text" name="dataType" placeholder="Enter data type" required>
-            <button type="button" class="remove-btn">×</button>
-          </div>
-        </div>
-        <button type="button" class="add-input-btn" onclick="addDynamicInput('dataTypesContainer', 'dataType', 'Enter data type')">+ Add Data Type</button>
-      </div>
-      
-      <div class="form-group">
-        <label>Associated Platforms:</label>
-        <select id="platformsSelect" multiple style="height: 100px;">
-          ${platformOptions}
-        </select>
-        <p style="font-size: 12px; color: #666; margin-top: 5px;">
-          Hold Ctrl/Cmd to select multiple platforms
-        </p>
-      </div>
-      
-      <div class="form-group">
-        <h3>Data Governance</h3>
-        <div class="grid">
-          <div>
-            <label for="governanceOwner">Owner:</label>
-            <input type="text" id="governanceOwner" required>
-          </div>
-          <div>
-            <label for="sensitivityLevel">Sensitivity Level:</label>
-            <select id="sensitivityLevel" required>
-              <option value="Public">Public</option>
-              <option value="Internal">Internal</option>
-              <option value="Confidential">Confidential</option>
-              <option value="PHI">PHI</option>
-            </select>
-          </div>
-          <div>
-            <label for="refreshFrequency">Refresh Frequency:</label>
-            <select id="refreshFrequency" required>
-              <option value="Real-time">Real-time</option>
-              <option value="Hourly">Hourly</option>
-              <option value="Daily">Daily</option>
-              <option value="Weekly">Weekly</option>
-              <option value="Monthly">Monthly</option>
-            </select>
-          </div>
-        </div>
-      </div>
-      
-      <button type="submit" class="submit-btn">Add Source</button>
-    </form>
-  `;
+  try {
+    // Ensure appData and platforms exist
+    if (!appData || !appData.platforms) {
+      console.error('appData or platforms is undefined');
+      alert('Error: Application data is not properly loaded. Please refresh the page.');
+      return;
+    }
 
-openModal();
-  
-  // Add event listeners to dynamic buttons
-  setupDynamicInputs();
-  
-  // Form submission
-  document.getElementById('addSourceForm').addEventListener('submit', handleAddSourceSubmit);
+    const platformOptions = appData.platforms.map(p => `
+      <option value="${p.id}">${p.name}</option>
+    `).join('');
+    
+    modalBody.innerHTML = `
+      <h2>Add New Data Source</h2>
+      <form id="addSourceForm">
+        <div class="form-group">
+          <label for="sourceId">ID (no spaces):</label>
+          <input type="text" id="sourceId" required pattern="[a-zA-Z0-9]+" title="Only letters and numbers, no spaces">
+        </div>
+        
+        <div class="form-group">
+          <label for="sourceName">Name:</label>
+          <input type="text" id="sourceName" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="sourceDescription">Description:</label>
+          <textarea id="sourceDescription" required></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label for="sourceType">Source Type:</label>
+          <select id="sourceType" required>
+            ${(appData.constants?.sourceTypes || [
+              "database", 
+              "dataWarehouse", 
+              "API", 
+              "fileSystem", 
+              "externalSystem"
+            ]).map(type => `
+              <option value="${type}">${type.charAt(0).toUpperCase() + type.slice(1)}</option>
+            `).join('')}
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="accessMethod">Access Method:</label>
+          <select id="accessMethod" required>
+            ${(appData.constants?.dataAccessMethods || [
+              "ODBC Connection",
+              "REST API",
+              "SFTP",
+              "Direct Query",
+              "Batch Export"
+            ]).map(method => `
+              <option value="${method}">${method}</option>
+            `).join('')}
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>Technologies:</label>
+          <div id="technologiesContainer" class="dynamic-inputs">
+            <div class="dynamic-input-row">
+              <input type="text" name="technology" placeholder="Enter technology" required>
+              <button type="button" class="remove-btn">×</button>
+            </div>
+          </div>
+          <button type="button" class="add-input-btn" onclick="addDynamicInput('technologiesContainer', 'technology', 'Enter technology')">+ Add Technology</button>
+        </div>
+        
+        <div class="form-group">
+          <label>Data Types:</label>
+          <div id="dataTypesContainer" class="dynamic-inputs">
+            <div class="dynamic-input-row">
+              <input type="text" name="dataType" placeholder="Enter data type" required>
+              <button type="button" class="remove-btn">×</button>
+            </div>
+          </div>
+          <button type="button" class="add-input-btn" onclick="addDynamicInput('dataTypesContainer', 'dataType', 'Enter data type')">+ Add Data Type</button>
+        </div>
+        
+        <div class="form-group">
+          <label>Associated Platforms:</label>
+          <select id="platformsSelect" multiple style="height: 100px;">
+            ${platformOptions}
+          </select>
+          <p style="font-size: 12px; color: #666; margin-top: 5px;">
+            Hold Ctrl/Cmd to select multiple platforms
+          </p>
+        </div>
+        
+        <div class="form-group">
+          <h3>Data Governance</h3>
+          <div class="grid">
+            <div>
+              <label for="governanceOwner">Owner:</label>
+              <input type="text" id="governanceOwner" required>
+            </div>
+            <div>
+              <label for="sensitivityLevel">Sensitivity Level:</label>
+              <select id="sensitivityLevel" required>
+                <option value="Public">Public</option>
+                <option value="Internal">Internal</option>
+                <option value="Confidential">Confidential</option>
+                <option value="PHI">PHI</option>
+              </select>
+            </div>
+            <div>
+              <label for="refreshFrequency">Refresh Frequency:</label>
+              <select id="refreshFrequency" required>
+                <option value="Real-time">Real-time</option>
+                <option value="Hourly">Hourly</option>
+                <option value="Daily">Daily</option>
+                <option value="Weekly">Weekly</option>
+                <option value="Monthly">Monthly</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        
+        <button type="submit" class="submit-btn">Add Source</button>
+      </form>
+    `;
+
+    openModal();
+    
+    // Add event listeners to dynamic buttons
+    setupDynamicInputs();
+    
+    // Form submission
+    document.getElementById('addSourceForm').addEventListener('submit', handleAddSourceSubmit);
+  } catch (error) {
+    console.error('Error in openAddSourceModal:', error);
+    alert('An error occurred while opening the Add Source modal. Please try again.');
+  }
 }
 
 
