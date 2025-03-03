@@ -49,21 +49,30 @@ async function initializeApp() {
       
       appData = await response.json();
       
-      // Ensure sources exists
-      if (!appData.sources) {
-        appData.sources = [];
-      }
+      // Ensure all required properties exist
+      appData.sources = appData.sources || [];
+      appData.platforms = appData.platforms || [];
+      appData.personas = appData.personas || [];
+      appData.journeys = appData.journeys || [];
       
       // Save the initial data to Firestore
       await saveAppData();
     }
-
-    // Additional validation
-    console.log('Loaded appData:', appData);
     
-    // Ensure sources array exists before rendering
-    if (!Array.isArray(appData.sources)) {
-      appData.sources = [];
+    // Validate constants
+    if (!appData.constants) {
+      appData.constants = {
+        sourceTypes: ["database", "dataWarehouse", "API", "fileSystem", "externalSystem"],
+        dataAccessMethods: ["ODBC Connection", "REST API", "SFTP", "Direct Query", "Batch Export"],
+        capabilityLevels: {
+          "1": "Novice - Basic awareness only",
+          "2": "Basic - Can use with guidance",
+          "3": "Intermediate - Independent with common tasks",
+          "4": "Advanced - Can perform complex operations",
+          "5": "Expert - Can train others, deep expertise"
+        },
+        standardCapabilityTypes: ["dataVisualization", "dataAnalysis", "selfService", "dataSystems", "dataQuality"]
+      };
     }
     
     // Set up event listeners
