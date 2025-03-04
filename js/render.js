@@ -25,45 +25,12 @@ function renderContent() {
   }
 }
 
-/**
- * Render the overview dashboard
- */
 function renderOverview() {
   // Ensure sources exists and is an array
   const sources = Array.isArray(appData.sources) ? appData.sources : [];
 
   let html = `
     <div class="grid">
-      <div class="card">
-        <div class="section-header">
-          <h2>Data Sources</h2>
-          <button class="add-new-btn" onclick="openAddSourceModal()">+ Add Source</button>
-        </div>
-        <div class="source-list">
-          ${sources.map(source => `
-            <div class="item" onclick="selectSource('${source.id}')">
-              <div class="item-title">${source.name}</div>
-              <div class="item-subtitle">${source.type}</div>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="section-header">
-          <h2>Platforms</h2>
-          <button class="add-new-btn" onclick="openAddPlatformModal()">+ Add Platform</button>
-        </div>
-        <div class="platform-list">
-          ${appData.platforms.map(platform => `
-            <div class="item" onclick="selectPlatform('${platform.id}')">
-              <div class="item-title">${platform.name}</div>
-              <div class="item-subtitle">${platform.description}</div>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-      
       <div class="card">
         <div class="section-header">
           <h2>User Personas</h2>
@@ -94,6 +61,36 @@ function renderOverview() {
               </div>
             `;
           }).join('')}
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-header">
+          <h2>Platforms</h2>
+          <button class="add-new-btn" onclick="openAddPlatformModal()">+ Add Platform</button>
+        </div>
+        <div class="platform-list">
+          ${appData.platforms.map(platform => `
+            <div class="item" onclick="selectPlatform('${platform.id}')">
+              <div class="item-title">${platform.name}</div>
+              <div class="item-subtitle">${platform.description}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-header">
+          <h2>Data Sources</h2>
+          <button class="add-new-btn" onclick="openAddSourceModal()">+ Add Source</button>
+        </div>
+        <div class="source-list">
+          ${sources.map(source => `
+            <div class="item" onclick="selectSource('${source.id}')">
+              <div class="item-title">${source.name}</div>
+              <div class="item-subtitle">${source.type}</div>
+            </div>
+          `).join('')}
         </div>
       </div>
     </div>
