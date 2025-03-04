@@ -150,6 +150,7 @@ function renderOverview() {
           <h2>User Personas</h2>
           <button class="add-new-btn" onclick="openAddPersonaModal()">+ Add Persona</button>
         </div>
+        <p class="persona-filter-hint">Click a persona to filter the data experience</p>
         <div class="persona-list">
           ${appData.personas.map(persona => `
             <div class="item" onclick="filterByPersona('${persona.id}')">
