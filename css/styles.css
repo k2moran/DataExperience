@@ -139,42 +139,65 @@ button.active {
     color: #b91c1c;
 }
 
-/* Capability Assessment Styles */
-.capability-grid {
-    display: grid;
-    grid-template-columns: 3fr 1fr 4fr;
-    gap: 10px;
+.tag-yellow {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+/* Persona Dimension Styles */
+.persona-list {
+    list-style-type: disc;
+    padding-left: 25px;
+    margin-bottom: 20px;
+}
+
+.persona-list li {
+    margin-bottom: 5px;
+}
+
+.persona-dimension {
+    margin-bottom: 20px;
+}
+
+.persona-dimension h3 {
+    font-size: 16px;
     margin-bottom: 10px;
+    color: #2563eb;
 }
 
-.capability-name {
-    text-transform: capitalize;
+.dimension-tag {
+    display: inline-block;
+    padding: 6px 12px;
+    margin: 4px;
+    border-radius: 20px;
+    font-size: 13px;
+    background-color: #f3f4f6;
+    color: #374151;
 }
 
-.capability-level {
-    text-align: center;
-    padding: 2px;
-    border-radius: 4px;
+.dimension-tag-responsibilities {
+    background-color: #e0f2fe;
+    color: #0c4a6e;
 }
 
-.level-1 {
-    background-color: #fee2e2;
+.dimension-tag-businessGoals {
+    background-color: #dcfce7;
+    color: #166534;
 }
 
-.level-2 {
-    background-color: #fed7aa;
+.dimension-tag-criticalDecisions {
+    background-color: #fef3c7;
+    color: #92400e;
 }
 
-.level-3 {
-    background-color: #fef08a;
+.dimension-tag-informationNeeds {
+    background-color: #ede9fe;
+    color: #5b21b6;
 }
 
-.level-4 {
-    background-color: #d9f99d;
-}
-
-.level-5 {
-    background-color: #bbf7d0;
+.dimension-tag-dataConsumption {
+    background-color: #dbeafe;
+    color: #1e40af;
 }
 
 /* Pain Point Styles */
@@ -350,23 +373,6 @@ button.active {
     background-color: #1d4ed8;
 }
 
-/* Slider for capability levels */
-.range-slider {
-    width: 100%;
-}
-
-.slider-container {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.slider-value {
-    width: 30px;
-    text-align: center;
-    font-weight: bold;
-}
-
 /* Loading State */
 .loading {
     text-align: center;
@@ -378,10 +384,6 @@ button.active {
 @media (max-width: 768px) {
     .grid {
         grid-template-columns: 1fr;
-    }
-    
-    .capability-grid {
-        grid-template-columns: 2fr 1fr 2fr;
     }
     
     .modal-content {
