@@ -111,6 +111,7 @@ function renderPlatformDetail() {
           <button class="add-new-btn" onclick="openAddPlatformModal()">+ Add Platform</button>
         </div>
         <p>Select a platform to view details</p>
+        <div class="grid platform-grid">
         <div class="platform-list">
           ${appData.platforms.map(platform => `
             <div class="item" onclick="selectPlatform('${platform.id}')">
@@ -306,6 +307,7 @@ function renderJourneyDetail() {
           <button class="add-new-btn" onclick="openAddJourneyModal()">+ Add Journey</button>
         </div>
         <p>Select a journey to view details</p>
+        <div class="grid journey-grid">
         <div class="journey-list">
           ${appData.journeys.map(journey => {
             const persona = appData.personas.find(p => p.id === journey.persona);
@@ -392,6 +394,7 @@ function renderSourceDetail() {
           <button class="add-new-btn" onclick="openAddSourceModal()">+ Add Source</button>
         </div>
         <p>Select a source to view details</p>
+        <div class="grid source-grid">
         <div class="source-list">
           ${appData.sources.map(source => `
             <div class="item" onclick="selectSource('${source.id}')">
