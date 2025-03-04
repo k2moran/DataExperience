@@ -170,11 +170,7 @@
       "SFTP",
       "Direct Query",
       "Batch Export"
-    ]
-  }
-}
-
-  "constants": {
+    ],
     "sourceTypes": [
       "database",
       "dataWarehouse", 
