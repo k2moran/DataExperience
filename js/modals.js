@@ -394,57 +394,148 @@ function openEditSourceModal(sourceId) {
   const source = appData.sources.find(s => s.id === sourceId);
   if (!source) return;
   
-  // Populate the form with the source data
-  document.getElementById('originalSourceId').value = source.id;
-  document.getElementById('sourceId').value = source.id;
-  document.getElementById('sourceName').value = source.name;
-  document.getElementById('sourceDescription').value = source.description;
-  document.getElementById('sourceType').value = source.type;
-  document.getElementById('accessMethod').value = source.accessMethod;
-  
-  // Populate technologies
-  const technologiesContainer = document.getElementById('technologiesContainer');
-  technologiesContainer.innerHTML = '';
-  source.technologies.forEach(tech => {
-    const newRow = document.createElement('div');
-    newRow.className = 'dynamic-input-row';
-    newRow.innerHTML = `
-      <input type="text" name="technology" value="${tech}" placeholder="Enter technology" required>
-      <button type="button" class="remove-btn">×</button>
-    `;
-    technologiesContainer.appendChild(newRow);
-  });
-  
-  // Populate data types
-  const dataTypesContainer = document.getElementById('dataTypesContainer');
-  dataTypesContainer.innerHTML = '';
-  source.dataTypes.forEach(type => {
-    const newRow = document.createElement('div');
-    newRow.className = 'dynamic-input-row';
-    newRow.innerHTML = `
-      <input type="text" name="dataType" value="${type}" placeholder="Enter data type" required>
-      <button type="button" class="remove-btn">×</button>
-    `;
-    dataTypesContainer.appendChild(newRow);
-  });
-  
-  // Populate associated platforms
-  const platformsSelect = document.getElementById('platformsSelect');
-  platformsSelect.innerHTML = appData.platforms.map(p => `
+  const platformOptions = appData.platforms.map(p => `
     <option value="${p.id}" ${source.associatedPlatforms.includes(p.id) ? 'selected' : ''}>${p.name}</option>
   `).join('');
   
-  // Populate governance details
-  document.getElementById('governanceOwner').value = source.dataGovernance.owner;
-  document.getElementById('sensitivityLevel').value = source.dataGovernance.sensitivityLevel;
-  document.getElementById('refreshFrequency').value = source.dataGovernance.refreshFrequency;
+  // First create the modal HTML with the form fields
+  modalBody.innerHTML = `
+    <h2>Edit Source: ${source.name}</h2>
+    <form id="editSourceForm">
+      <input type="hidden" id="originalSourceId" value="${source.id}">
+      
+      <div class="form-group">
+        <label for="sourceId">ID (no spaces):</label>
+        <input type="text" id="sourceId" value="${source.id}" required pattern="[a-zA-Z0-9]+" title="Only letters and numbers, no spaces">
+      </div>
+      
+      <div class="form-group">
+        <label for="sourceName">Name:</label>
+        <input type="text" id="sourceName" value="${source.name}" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="sourceDescription">Description:</label>
+        <textarea id="sourceDescription" required>${source.description}</textarea>
+      </div>
+      
+      <div class="form-group">
+        <label for="sourceType">Source Type:</label>
+        <select id="sourceType" required>
+          ${(appData.constants?.sourceTypes || [
+            "database", 
+            "dataWarehouse", 
+            "API", 
+            "fileSystem", 
+            "externalSystem"
+          ]).map(type => `
+            <option value="${type}" ${source.type === type ? 'selected' : ''}>${type.charAt(0).toUpperCase() + type.slice(1)}</option>
+          `).join('')}
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label for="accessMethod">Access Method:</label>
+        <select id="accessMethod" required>
+          ${(appData.constants?.dataAccessMethods || [
+            "ODBC Connection",
+            "REST API",
+            "SFTP",
+            "Direct Query",
+            "Batch Export"
+          ]).map(method => `
+            <option value="${method}" ${source.accessMethod === method ? 'selected' : ''}>${method}</option>
+          `).join('')}
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>Technologies:</label>
+        <div id="technologiesContainer" class="dynamic-inputs">
+          ${source.technologies.map(tech => `
+            <div class="dynamic-input-row">
+              <input type="text" name="technology" value="${tech}" placeholder="Enter technology" required>
+              <button type="button" class="remove-btn">×</button>
+            </div>
+          `).join('')}
+          ${source.technologies.length === 0 ? `
+            <div class="dynamic-input-row">
+              <input type="text" name="technology" placeholder="Enter technology" required>
+              <button type="button" class="remove-btn">×</button>
+            </div>
+          ` : ''}
+        </div>
+        <button type="button" class="add-input-btn" onclick="addDynamicInput('technologiesContainer', 'technology', 'Enter technology')">+ Add Technology</button>
+      </div>
+      
+      <div class="form-group">
+        <label>Data Types:</label>
+        <div id="dataTypesContainer" class="dynamic-inputs">
+          ${source.dataTypes.map(type => `
+            <div class="dynamic-input-row">
+              <input type="text" name="dataType" value="${type}" placeholder="Enter data type" required>
+              <button type="button" class="remove-btn">×</button>
+            </div>
+          `).join('')}
+          ${source.dataTypes.length === 0 ? `
+            <div class="dynamic-input-row">
+              <input type="text" name="dataType" placeholder="Enter data type" required>
+              <button type="button" class="remove-btn">×</button>
+            </div>
+          ` : ''}
+        </div>
+        <button type="button" class="add-input-btn" onclick="addDynamicInput('dataTypesContainer', 'dataType', 'Enter data type')">+ Add Data Type</button>
+      </div>
+      
+      <div class="form-group">
+        <label>Associated Platforms:</label>
+        <select id="platformsSelect" multiple style="height: 100px;">
+          ${platformOptions}
+        </select>
+        <p style="font-size: 12px; color: #666; margin-top: 5px;">
+          Hold Ctrl/Cmd to select multiple platforms
+        </p>
+      </div>
+      
+      <div class="form-group">
+        <h3>Data Governance</h3>
+        <div class="grid">
+          <div>
+            <label for="governanceOwner">Owner:</label>
+            <input type="text" id="governanceOwner" value="${source.dataGovernance.owner}" required>
+          </div>
+          <div>
+            <label for="sensitivityLevel">Sensitivity Level:</label>
+            <select id="sensitivityLevel" required>
+              <option value="Public" ${source.dataGovernance.sensitivityLevel === 'Public' ? 'selected' : ''}>Public</option>
+              <option value="Internal" ${source.dataGovernance.sensitivityLevel === 'Internal' ? 'selected' : ''}>Internal</option>
+              <option value="Confidential" ${source.dataGovernance.sensitivityLevel === 'Confidential' ? 'selected' : ''}>Confidential</option>
+              <option value="PHI" ${source.dataGovernance.sensitivityLevel === 'PHI' ? 'selected' : ''}>PHI</option>
+            </select>
+          </div>
+          <div>
+            <label for="refreshFrequency">Refresh Frequency:</label>
+            <select id="refreshFrequency" required>
+              <option value="Real-time" ${source.dataGovernance.refreshFrequency === 'Real-time' ? 'selected' : ''}>Real-time</option>
+              <option value="Hourly" ${source.dataGovernance.refreshFrequency === 'Hourly' ? 'selected' : ''}>Hourly</option>
+              <option value="Daily" ${source.dataGovernance.refreshFrequency === 'Daily' ? 'selected' : ''}>Daily</option>
+              <option value="Weekly" ${source.dataGovernance.refreshFrequency === 'Weekly' ? 'selected' : ''}>Weekly</option>
+              <option value="Monthly" ${source.dataGovernance.refreshFrequency === 'Monthly' ? 'selected' : ''}>Monthly</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      
+      <button type="submit" class="submit-btn">Update Source</button>
+    </form>
+  `;
   
   openModal();
   
-  // Add event listeners to dynamic buttons
+  // Setup dynamic input remove buttons
   setupDynamicInputs();
   
-  // Form submission
+  // Form submission - attach event listener to the form
   document.getElementById('editSourceForm').addEventListener('submit', handleEditSourceSubmit);
 }
 
