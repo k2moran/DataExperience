@@ -6,6 +6,13 @@
  * Main render function to determine what to display
  */
 function renderContent() {
+  // Check if we're in filtered view mode
+  if (activeView === 'overview' && viewMode === 'filtered' && filterPersona) {
+    renderFilteredView(filterPersona);
+    return;
+  }
+  
+  // Otherwise use standard views
   switch(activeView) {
     case 'overview':
       renderOverview();
@@ -25,6 +32,113 @@ function renderContent() {
   }
 }
 
+/**
+ * Render the persona-filtered view
+ * @param {string} personaId - ID of the persona to filter by
+ */
+function renderFilteredView(personaId) {
+  const persona = appData.personas.find(p => p.id === personaId);
+  if (!persona) {
+    // If persona not found, fall back to standard overview
+    renderOverview();
+    return;
+  }
+  
+  // Find journeys for this persona
+  const relatedJourneys = appData.journeys.filter(j => j.persona === personaId);
+  
+  // Find platforms this persona uses
+  const relatedPlatformIds = persona.primaryPlatforms || [];
+  const relatedPlatforms = appData.platforms.filter(p => relatedPlatformIds.includes(p.id));
+  
+  // Find sources used by these platforms
+  const platformSourceIds = new Set();
+  relatedPlatforms.forEach(platform => {
+    appData.sources.forEach(source => {
+      if (source.associatedPlatforms && source.associatedPlatforms.includes(platform.id)) {
+        platformSourceIds.add(source.id);
+      }
+    });
+  });
+  const relatedSources = appData.sources.filter(s => platformSourceIds.has(s.id));
+  
+  let html = `
+    <div class="filter-header">
+      <h2>Viewing data experience for: ${persona.name}</h2>
+      <div class="filter-actions">
+        <button onclick="clearFilters()" class="secondary-btn">Clear Filter</button>
+        <button onclick="switchToEditMode()" class="primary-btn">Switch to Edit Mode</button>
+      </div>
+    </div>
+    <div class="grid">
+      <!-- Persona card with highlight -->
+      <div class="card active-filter">
+        <div class="section-header">
+          <h2>User Personas</h2>
+        </div>
+        <div class="persona-list">
+          <div class="item highlighted">
+            <div class="item-title">${persona.name}</div>
+            <div class="item-subtitle">${persona.role}</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Related journeys -->
+      <div class="card">
+        <div class="section-header">
+          <h2>User Journeys</h2>
+        </div>
+        <div class="journey-list">
+          ${relatedJourneys.map(journey => `
+            <div class="item" onclick="selectJourney('${journey.id}')">
+              <div class="item-title">${journey.name}</div>
+            </div>
+          `).join('')}
+          ${relatedJourneys.length === 0 ? '<p class="empty-list">No journeys found for this persona</p>' : ''}
+        </div>
+      </div>
+      
+      <!-- Related platforms -->
+      <div class="card">
+        <div class="section-header">
+          <h2>Platforms</h2>
+        </div>
+        <div class="platform-list">
+          ${relatedPlatforms.map(platform => `
+            <div class="item" onclick="selectPlatform('${platform.id}')">
+              <div class="item-title">${platform.name}</div>
+              <div class="item-subtitle">${platform.description}</div>
+            </div>
+          `).join('')}
+          ${relatedPlatforms.length === 0 ? '<p class="empty-list">No platforms used by this persona</p>' : ''}
+        </div>
+      </div>
+      
+      <!-- Related sources -->
+      <div class="card">
+        <div class="section-header">
+          <h2>Data Sources</h2>
+        </div>
+        <div class="source-list">
+          ${relatedSources.map(source => `
+            <div class="item" onclick="selectSource('${source.id}')">
+              <div class="item-title">${source.name}</div>
+              <div class="item-subtitle">${source.type}</div>
+            </div>
+          `).join('')}
+          ${relatedSources.length === 0 ? '<p class="empty-list">No related data sources</p>' : ''}
+        </div>
+      </div>
+    </div>
+  `;
+  
+  mainContent.innerHTML = html;
+}
+
+/**
+ * Render the overview dashboard
+ */
 function renderOverview() {
   // Ensure sources exists and is an array
   const sources = Array.isArray(appData.sources) ? appData.sources : [];
@@ -38,7 +152,7 @@ function renderOverview() {
         </div>
         <div class="persona-list">
           ${appData.personas.map(persona => `
-            <div class="item" onclick="selectPersona('${persona.id}')">
+            <div class="item" onclick="filterByPersona('${persona.id}')">
               <div class="item-title">${persona.name}</div>
               <div class="item-subtitle">${persona.role}</div>
             </div>
@@ -78,7 +192,7 @@ function renderOverview() {
           `).join('')}
         </div>
       </div>
-
+      
       <div class="card">
         <div class="section-header">
           <h2>Data Sources</h2>
