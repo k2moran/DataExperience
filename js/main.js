@@ -142,6 +142,12 @@ function setupEventListeners() {
 function setActiveView(view) {
   activeView = view;
   viewMode = 'default'; // Reset view mode when changing views
+
+  // Reset selection variables when changing views
+  if (view !== 'platforms') selectedPlatform = null;
+  if (view !== 'sources') selectedSource = null;
+  if (view !== 'personas') selectedPersona = null;
+  if (view !== 'journeys') selectedJourney = null;
   
   // Update button states
   [overviewBtn, sourcesBtn, platformsBtn, personasBtn, journeysBtn].forEach(btn => {
