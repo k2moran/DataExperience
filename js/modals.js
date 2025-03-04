@@ -223,7 +223,7 @@ function openAddPlatformModal() {
 }
 
 /**
- * Open the Add Persona modal dialog
+ * Open the Add Persona modal dialog - UPDATED VERSION
  */
 function openAddPersonaModal() {
   const platformOptions = appData.platforms.map(p => `
@@ -249,17 +249,58 @@ function openAddPersonaModal() {
       </div>
       
       <div class="form-group">
-        <label>Capabilities:</label>
-        ${appData.constants.standardCapabilityTypes.map(capability => `
-          <div style="margin-bottom: 15px;">
-            <label>${capability.replace(/([A-Z])/g, ' $1').trim()}:</label>
-            <div class="slider-container">
-              <input type="range" class="range-slider" name="${capability}" min="1" max="5" value="3">
-              <span class="slider-value">3</span>
-              <span class="slider-description">${appData.constants.capabilityLevels[3]}</span>
-            </div>
+        <label>Key Responsibilities:</label>
+        <div id="responsibilitiesContainer" class="dynamic-inputs">
+          <div class="dynamic-input-row">
+            <input type="text" name="responsibility" placeholder="Enter key responsibility" required>
+            <button type="button" class="remove-btn">×</button>
           </div>
-        `).join('')}
+        </div>
+        <button type="button" class="add-input-btn" onclick="addDynamicInput('responsibilitiesContainer', 'responsibility', 'Enter key responsibility')">+ Add Responsibility</button>
+      </div>
+      
+      <div class="form-group">
+        <label>Business Goals:</label>
+        <div id="businessGoalsContainer" class="dynamic-inputs">
+          <div class="dynamic-input-row">
+            <input type="text" name="businessGoal" placeholder="Enter business goal" required>
+            <button type="button" class="remove-btn">×</button>
+          </div>
+        </div>
+        <button type="button" class="add-input-btn" onclick="addDynamicInput('businessGoalsContainer', 'businessGoal', 'Enter business goal')">+ Add Business Goal</button>
+      </div>
+      
+      <div class="form-group">
+        <label>Critical Decisions:</label>
+        <div id="criticalDecisionsContainer" class="dynamic-inputs">
+          <div class="dynamic-input-row">
+            <input type="text" name="criticalDecision" placeholder="Enter critical decision" required>
+            <button type="button" class="remove-btn">×</button>
+          </div>
+        </div>
+        <button type="button" class="add-input-btn" onclick="addDynamicInput('criticalDecisionsContainer', 'criticalDecision', 'Enter critical decision')">+ Add Critical Decision</button>
+      </div>
+      
+      <div class="form-group">
+        <label>Information Needs:</label>
+        <div id="informationNeedsContainer" class="dynamic-inputs">
+          <div class="dynamic-input-row">
+            <input type="text" name="informationNeed" placeholder="Enter information need" required>
+            <button type="button" class="remove-btn">×</button>
+          </div>
+        </div>
+        <button type="button" class="add-input-btn" onclick="addDynamicInput('informationNeedsContainer', 'informationNeed', 'Enter information need')">+ Add Information Need</button>
+      </div>
+      
+      <div class="form-group">
+        <label>Data Consumption Preferences:</label>
+        <div id="dataConsumptionContainer" class="dynamic-inputs">
+          <div class="dynamic-input-row">
+            <input type="text" name="dataConsumption" placeholder="Enter data consumption preference" required>
+            <button type="button" class="remove-btn">×</button>
+          </div>
+        </div>
+        <button type="button" class="add-input-btn" onclick="addDynamicInput('dataConsumptionContainer', 'dataConsumption', 'Enter data consumption preference')">+ Add Preference</button>
       </div>
       
       <div class="form-group">
@@ -291,17 +332,6 @@ function openAddPersonaModal() {
   
   // Add event listeners to dynamic buttons
   setupDynamicInputs();
-  
-  // Add event listeners to range sliders
-  document.querySelectorAll('.range-slider').forEach(slider => {
-    const valueSpan = slider.parentNode.querySelector('.slider-value');
-    const descriptionSpan = slider.parentNode.querySelector('.slider-description');
-    
-    slider.addEventListener('input', function() {
-      valueSpan.textContent = this.value;
-      descriptionSpan.textContent = appData.constants.capabilityLevels[this.value];
-    });
-  });
   
   // Form submission
   document.getElementById('addPersonaForm').addEventListener('submit', handleAddPersonaSubmit);
@@ -615,7 +645,7 @@ function openEditPlatformModal(platformId) {
 }
 
 /**
- * Open the Edit Persona modal dialog
+ * Open the Edit Persona modal dialog - UPDATED VERSION
  * @param {string} personaId - ID of the persona to edit
  */
 function openEditPersonaModal(personaId) {
@@ -647,20 +677,98 @@ function openEditPersonaModal(personaId) {
       </div>
       
       <div class="form-group">
-        <label>Capabilities:</label>
-        ${appData.constants.standardCapabilityTypes.map(capability => {
-          const level = persona.capabilities[capability] || 3;
-          return `
-            <div style="margin-bottom: 15px;">
-              <label>${capability.replace(/([A-Z])/g, ' $1').trim()}:</label>
-              <div class="slider-container">
-                <input type="range" class="range-slider" name="${capability}" min="1" max="5" value="${level}">
-                <span class="slider-value">${level}</span>
-                <span class="slider-description">${appData.constants.capabilityLevels[level]}</span>
-              </div>
+        <label>Key Responsibilities:</label>
+        <div id="responsibilitiesContainer" class="dynamic-inputs">
+          ${(persona.responsibilities || []).map(item => `
+            <div class="dynamic-input-row">
+              <input type="text" name="responsibility" value="${item}" placeholder="Enter key responsibility" required>
+              <button type="button" class="remove-btn">×</button>
             </div>
-          `;
-        }).join('')}
+          `).join('')}
+          ${(persona.responsibilities || []).length === 0 ? `
+            <div class="dynamic-input-row">
+              <input type="text" name="responsibility" placeholder="Enter key responsibility" required>
+              <button type="button" class="remove-btn">×</button>
+            </div>
+          ` : ''}
+        </div>
+        <button type="button" class="add-input-btn" onclick="addDynamicInput('responsibilitiesContainer', 'responsibility', 'Enter key responsibility')">+ Add Responsibility</button>
+      </div>
+      
+      <div class="form-group">
+        <label>Business Goals:</label>
+        <div id="businessGoalsContainer" class="dynamic-inputs">
+          ${(persona.businessGoals || []).map(item => `
+            <div class="dynamic-input-row">
+              <input type="text" name="businessGoal" value="${item}" placeholder="Enter business goal" required>
+              <button type="button" class="remove-btn">×</button>
+            </div>
+          `).join('')}
+          ${(persona.businessGoals || []).length === 0 ? `
+            <div class="dynamic-input-row">
+              <input type="text" name="businessGoal" placeholder="Enter business goal" required>
+              <button type="button" class="remove-btn">×</button>
+            </div>
+          ` : ''}
+        </div>
+        <button type="button" class="add-input-btn" onclick="addDynamicInput('businessGoalsContainer', 'businessGoal', 'Enter business goal')">+ Add Business Goal</button>
+      </div>
+      
+      <div class="form-group">
+        <label>Critical Decisions:</label>
+        <div id="criticalDecisionsContainer" class="dynamic-inputs">
+          ${(persona.criticalDecisions || []).map(item => `
+            <div class="dynamic-input-row">
+              <input type="text" name="criticalDecision" value="${item}" placeholder="Enter critical decision" required>
+              <button type="button" class="remove-btn">×</button>
+            </div>
+          `).join('')}
+          ${(persona.criticalDecisions || []).length === 0 ? `
+            <div class="dynamic-input-row">
+              <input type="text" name="criticalDecision" placeholder="Enter critical decision" required>
+              <button type="button" class="remove-btn">×</button>
+            </div>
+          ` : ''}
+        </div>
+        <button type="button" class="add-input-btn" onclick="addDynamicInput('criticalDecisionsContainer', 'criticalDecision', 'Enter critical decision')">+ Add Critical Decision</button>
+      </div>
+      
+      <div class="form-group">
+        <label>Information Needs:</label>
+        <div id="informationNeedsContainer" class="dynamic-inputs">
+          ${(persona.informationNeeds || []).map(item => `
+            <div class="dynamic-input-row">
+              <input type="text" name="informationNeed" value="${item}" placeholder="Enter information need" required>
+              <button type="button" class="remove-btn">×</button>
+            </div>
+          `).join('')}
+          ${(persona.informationNeeds || []).length === 0 ? `
+            <div class="dynamic-input-row">
+              <input type="text" name="informationNeed" placeholder="Enter information need" required>
+              <button type="button" class="remove-btn">×</button>
+            </div>
+          ` : ''}
+        </div>
+        <button type="button" class="add-input-btn" onclick="addDynamicInput('informationNeedsContainer', 'informationNeed', 'Enter information need')">+ Add Information Need</button>
+      </div>
+      
+      <div class="form-group">
+        <label>Data Consumption Preferences:</label>
+        <div id="dataConsumptionContainer" class="dynamic-inputs">
+          ${(persona.dataConsumptionPreferences || []).map(item => `
+            <div class="dynamic-input-row">
+              <input type="text" name="dataConsumption" value="${item}" placeholder="Enter data consumption preference" required>
+              <button type="button" class="remove-btn">×</button>
+            </div>
+          `).join('')}
+          ${(persona.dataConsumptionPreferences || []).length === 0 ? `
+            <div class="dynamic-input-row">
+              <input type="text" name="dataConsumption" placeholder="Enter data consumption preference" required>
+              <button type="button" class="remove-btn">×</button>
+            </div>
+          ` : ''}
+        </div>
+        <button type="button" class="add-input-btn" onclick="addDynamicInput('dataConsumptionContainer', 'dataConsumption', 'Enter data consumption preference')">+ Add Preference</button>
       </div>
       
       <div class="form-group">
@@ -694,17 +802,6 @@ function openEditPersonaModal(personaId) {
   
   // Add event listeners to dynamic buttons
   setupDynamicInputs();
-  
-  // Add event listeners to range sliders
-  document.querySelectorAll('.range-slider').forEach(slider => {
-    const valueSpan = slider.parentNode.querySelector('.slider-value');
-    const descriptionSpan = slider.parentNode.querySelector('.slider-description');
-    
-    slider.addEventListener('input', function() {
-      valueSpan.textContent = this.value;
-      descriptionSpan.textContent = appData.constants.capabilityLevels[this.value];
-    });
-  });
   
   // Form submission
   document.getElementById('editPersonaForm').addEventListener('submit', handleEditPersonaSubmit);
