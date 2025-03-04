@@ -172,9 +172,9 @@ function setActiveView(view) {
  * @param {string} personaId - ID of the persona to filter by
  */
 function filterByPersona(personaId) {
-  viewMode = 'filtered';
   filterPersona = personaId;
-  setActiveView('overview'); // Ensure we're on the overview
+  // Don't call setActiveView since it resets viewMode
+  viewMode = 'filtered';
   renderContent();
 }
 
