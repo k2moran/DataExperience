@@ -513,3 +513,15 @@ button.active {
   font-style: italic;
   text-align: center;
 }
+/*Grid display for each Edit page*/
+.journey-list .item,
+.platform-list .item,
+.source-list .item {
+  max-width: 100%;
+  width: 100%;
+}
+
+/* For the non-overview pages */
+.card {
+  max-width: 100%;
+}
