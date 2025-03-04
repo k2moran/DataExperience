@@ -87,6 +87,14 @@ button.active {
     gap: 20px;
 }
 
+/* Ensure detail pages maintain a reasonable width */
+.journey-list .item,
+.platform-list .item,
+.source-list .item {
+    width: 100%;
+    box-sizing: border-box;
+}
+
 /* Item Styles */
 .item {
     border: 1px solid #e0e0e0;
@@ -512,13 +520,6 @@ button.active {
   margin-bottom: 10px;
   font-style: italic;
   text-align: center;
-}
-/*Grid display for each Edit page*/
-.journey-list .item,
-.platform-list .item,
-.source-list .item {
-  max-width: 100%;
-  width: 100%;
 }
 
 /* For the non-overview pages */
