@@ -5,15 +5,17 @@
 // Application state
 let appData = null;
 let activeView = 'overview';
-let selectedSource = null;  // New state for sources
+let selectedSource = null;
 let selectedPlatform = null;
 let selectedPersona = null;
 let selectedJourney = null;
+let viewMode = 'default'; // new state for tracking view mode: 'default', 'filtered', or 'edit'
+let filterPersona = null; // new state to track which persona is being used as a filter
 
 // DOM elements
 const mainContent = document.getElementById('mainContent');
 const overviewBtn = document.getElementById('overviewBtn');
-const sourcesBtn = document.getElementById('sourcesBtn');  // New button
+const sourcesBtn = document.getElementById('sourcesBtn');
 const platformsBtn = document.getElementById('platformsBtn');
 const personasBtn = document.getElementById('personasBtn');
 const journeysBtn = document.getElementById('journeysBtn');
@@ -98,11 +100,12 @@ async function initializeApp() {
  */
 function setupEventListeners() {
   overviewBtn.addEventListener('click', () => {
+    clearFilters(); // Clear any active filters when going to overview
     setActiveView('overview');
     renderContent();
   });
 
-    // Navigation buttons
+  // Navigation buttons
   sourcesBtn.addEventListener('click', () => {
     setActiveView('sources');
     renderContent();
@@ -138,6 +141,13 @@ function setupEventListeners() {
  */
 function setActiveView(view) {
   activeView = view;
+  viewMode = 'default'; // Reset view mode when changing views
+
+  // Reset selection variables when changing views
+  if (view !== 'platforms') selectedPlatform = null;
+  if (view !== 'sources') selectedSource = null;
+  if (view !== 'personas') selectedPersona = null;
+  if (view !== 'journeys') selectedJourney = null;
   
   // Update button states
   [overviewBtn, sourcesBtn, platformsBtn, personasBtn, journeysBtn].forEach(btn => {
@@ -161,6 +171,38 @@ function setActiveView(view) {
       journeysBtn.classList.add('active');
       break;
   }
+}
+
+/**
+ * Filter the overview by a specific persona
+ * @param {string} personaId - ID of the persona to filter by
+ */
+function filterByPersona(personaId) {
+  filterPersona = personaId;
+  // Don't call setActiveView since it resets viewMode
+  viewMode = 'filtered';
+  renderContent();
+}
+
+/**
+ * Clear any active filters and return to default view
+ */
+function clearFilters() {
+  viewMode = 'default';
+  filterPersona = null;
+  renderContent();
+}
+
+/**
+ * Switch to edit mode for the current filtered persona
+ */
+function switchToEditMode() {
+  viewMode = 'edit';
+  if (filterPersona) {
+    selectedPersona = filterPersona;
+    setActiveView('personas');
+  }
+  renderContent();
 }
 
 /**

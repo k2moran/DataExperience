@@ -87,6 +87,14 @@ button.active {
     gap: 20px;
 }
 
+/* Ensure detail pages maintain a reasonable width */
+.journey-list .item,
+.platform-list .item,
+.source-list .item {
+    width: 100%;
+    box-sizing: border-box;
+}
+
 /* Item Styles */
 .item {
     border: 1px solid #e0e0e0;
@@ -399,4 +407,122 @@ button.active {
         flex-grow: 1;
         min-width: 80px;
     }
+}
+
+/**
+ * Add these styles to the end of your existing styles.css file
+ */
+
+/* Filtering styles */
+.active-filter {
+  border-left: 4px solid #10b981;
+}
+
+.highlighted {
+  background-color: #f0fdf4;
+  border-color: #10b981;
+}
+
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f0fdf4;
+  border-radius: 8px;
+  border-left: 4px solid #10b981;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.filter-header h2 {
+  font-size: 18px;
+  margin: 0;
+  color: #166534;
+}
+
+.filter-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.empty-list {
+  color: #6b7280;
+  font-style: italic;
+  padding: 10px 0;
+  text-align: center;
+}
+
+.primary-btn {
+  background-color: #2563eb;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.primary-btn:hover {
+  background-color: #1d4ed8;
+}
+
+.secondary-btn {
+  background-color: #e5e7eb;
+  color: #374151;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.secondary-btn:hover {
+  background-color: #d1d5db;
+}
+/* Make the persona items clearly interactive */
+.persona-list .item {
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+  padding-right: 30px; /* Space for the filter icon */
+}
+
+/* Add filter icon to each persona item */
+.persona-list .item::after {
+  content: "⊕";
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: #2563eb;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+}
+
+/* Enhance hover effect */
+.persona-list .item:hover {
+  background-color: #f0f9ff; /* Light blue background on hover */
+  border-color: #60a5fa;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.persona-list .item:hover::after {
+  opacity: 1;
+}
+
+/* Add filter instruction text */
+.persona-filter-hint {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  font-style: italic;
+  text-align: center;
+}
+
+/* For the non-overview pages */
+.card {
+  max-width: 100%;
 }
