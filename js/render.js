@@ -193,7 +193,7 @@ function renderPlatformDetail() {
 }
 
 /**
- * Render persona detail view
+ * Render persona detail view - UPDATED VERSION
  */
 function renderPersonaDetail() {
   if (!selectedPersona) {
@@ -239,16 +239,30 @@ function renderPersonaDetail() {
       </div>
       <p style="color: #666; margin-bottom: 20px;">${persona.role}</p>
       
-      <h3>Capability Assessment</h3>
-      <div style="margin-bottom: 20px;">
-        ${Object.entries(persona.capabilities).map(([capability, level]) => `
-          <div class="capability-grid">
-            <div class="capability-name">${capability.replace(/([A-Z])/g, ' $1').trim()}</div>
-            <div class="capability-level level-${level}">${level}</div>
-            <div style="font-size: 14px; color: #666;">${appData.constants.capabilityLevels[level]}</div>
-          </div>
-        `).join('')}
-      </div>
+      <h3>Key Responsibilities</h3>
+      <ul class="persona-list">
+        ${(persona.responsibilities || []).map(item => `<li>${item}</li>`).join('')}
+      </ul>
+      
+      <h3>Business Goals</h3>
+      <ul class="persona-list">
+        ${(persona.businessGoals || []).map(item => `<li>${item}</li>`).join('')}
+      </ul>
+      
+      <h3>Critical Decisions</h3>
+      <ul class="persona-list">
+        ${(persona.criticalDecisions || []).map(item => `<li>${item}</li>`).join('')}
+      </ul>
+      
+      <h3>Information Needs</h3>
+      <ul class="persona-list">
+        ${(persona.informationNeeds || []).map(item => `<li>${item}</li>`).join('')}
+      </ul>
+      
+      <h3>Data Consumption Preferences</h3>
+      <ul class="persona-list">
+        ${(persona.dataConsumptionPreferences || []).map(item => `<li>${item}</li>`).join('')}
+      </ul>
       
       <h3>Pain Points</h3>
       <ul class="pain-point-list">
