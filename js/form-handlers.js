@@ -304,7 +304,7 @@ function handleAddPlatformSubmit(e) {
 }
 
 /**
- * Handle Add Persona form submission
+ * Handle Add Persona form submission - UPDATED VERSION
  * @param {Event} e - Form submit event
  */
 function handleAddPersonaSubmit(e) {
@@ -315,11 +315,39 @@ function handleAddPersonaSubmit(e) {
   const name = document.getElementById('personaName').value.trim();
   const role = document.getElementById('personaRole').value.trim();
   
-  // Get capabilities
-  const capabilities = {};
-  appData.constants.standardCapabilityTypes.forEach(capability => {
-    const slider = document.querySelector(`input[name="${capability}"]`);
-    capabilities[capability] = parseInt(slider.value);
+  // Get responsibilities
+  const responsibilities = [];
+  document.querySelectorAll('#responsibilitiesContainer input[name="responsibility"]').forEach(input => {
+    const value = input.value.trim();
+    if (value) responsibilities.push(value);
+  });
+  
+  // Get business goals
+  const businessGoals = [];
+  document.querySelectorAll('#businessGoalsContainer input[name="businessGoal"]').forEach(input => {
+    const value = input.value.trim();
+    if (value) businessGoals.push(value);
+  });
+  
+  // Get critical decisions
+  const criticalDecisions = [];
+  document.querySelectorAll('#criticalDecisionsContainer input[name="criticalDecision"]').forEach(input => {
+    const value = input.value.trim();
+    if (value) criticalDecisions.push(value);
+  });
+  
+  // Get information needs
+  const informationNeeds = [];
+  document.querySelectorAll('#informationNeedsContainer input[name="informationNeed"]').forEach(input => {
+    const value = input.value.trim();
+    if (value) informationNeeds.push(value);
+  });
+  
+  // Get data consumption preferences
+  const dataConsumptionPreferences = [];
+  document.querySelectorAll('#dataConsumptionContainer input[name="dataConsumption"]').forEach(input => {
+    const value = input.value.trim();
+    if (value) dataConsumptionPreferences.push(value);
   });
   
   // Get pain points
@@ -344,7 +372,11 @@ function handleAddPersonaSubmit(e) {
     id,
     name,
     role,
-    capabilities,
+    responsibilities,
+    businessGoals,
+    criticalDecisions,
+    informationNeeds,
+    dataConsumptionPreferences,
     painPoints,
     primaryPlatforms
   };
@@ -499,7 +531,7 @@ function handleEditSourceSubmit(e) {
 }
 
 /**
- * Handle Edit Persona form submission
+ * Handle Edit Persona form submission - UPDATED VERSION
  * @param {Event} e - Form submit event
  */
 function handleEditPersonaSubmit(e) {
@@ -510,11 +542,39 @@ function handleEditPersonaSubmit(e) {
   const name = document.getElementById('personaName').value.trim();
   const role = document.getElementById('personaRole').value.trim();
   
-  // Get capabilities
-  const capabilities = {};
-  appData.constants.standardCapabilityTypes.forEach(capability => {
-    const slider = document.querySelector(`input[name="${capability}"]`);
-    capabilities[capability] = parseInt(slider.value);
+  // Get responsibilities
+  const responsibilities = [];
+  document.querySelectorAll('#responsibilitiesContainer input[name="responsibility"]').forEach(input => {
+    const value = input.value.trim();
+    if (value) responsibilities.push(value);
+  });
+  
+  // Get business goals
+  const businessGoals = [];
+  document.querySelectorAll('#businessGoalsContainer input[name="businessGoal"]').forEach(input => {
+    const value = input.value.trim();
+    if (value) businessGoals.push(value);
+  });
+  
+  // Get critical decisions
+  const criticalDecisions = [];
+  document.querySelectorAll('#criticalDecisionsContainer input[name="criticalDecision"]').forEach(input => {
+    const value = input.value.trim();
+    if (value) criticalDecisions.push(value);
+  });
+  
+  // Get information needs
+  const informationNeeds = [];
+  document.querySelectorAll('#informationNeedsContainer input[name="informationNeed"]').forEach(input => {
+    const value = input.value.trim();
+    if (value) informationNeeds.push(value);
+  });
+  
+  // Get data consumption preferences
+  const dataConsumptionPreferences = [];
+  document.querySelectorAll('#dataConsumptionContainer input[name="dataConsumption"]').forEach(input => {
+    const value = input.value.trim();
+    if (value) dataConsumptionPreferences.push(value);
   });
   
   // Get pain points
@@ -547,7 +607,11 @@ function handleEditPersonaSubmit(e) {
     id,
     name,
     role,
-    capabilities,
+    responsibilities,
+    businessGoals,
+    criticalDecisions,
+    informationNeeds,
+    dataConsumptionPreferences,
     painPoints,
     primaryPlatforms
   };
