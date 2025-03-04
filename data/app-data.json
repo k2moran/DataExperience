@@ -30,13 +30,31 @@
       "id": "operationalLeader",
       "name": "Clinical Operations Leader",
       "role": "Department Chair/Director",
-      "capabilities": {
-        "dataVisualization": 3,
-        "dataAnalysis": 2,
-        "selfService": 1,
-        "dataSystems": 1,
-        "dataQuality": 2
-      },
+      "responsibilities": [
+        "Oversee clinical operations in department",
+        "Monitor quality metrics and outcomes",
+        "Manage staff and resources"
+      ],
+      "businessGoals": [
+        "Improve patient outcomes",
+        "Optimize resource utilization",
+        "Meet department performance targets"
+      ],
+      "criticalDecisions": [
+        "Resource allocation priorities",
+        "Process improvement initiatives",
+        "Staff scheduling and assignments"
+      ],
+      "informationNeeds": [
+        "Department performance metrics",
+        "Staffing efficiency data",
+        "Patient outcome trends"
+      ],
+      "dataConsumptionPreferences": [
+        "Executive-level dashboards",
+        "Monthly summary reports", 
+        "Email alerts for critical metrics"
+      ],
       "painPoints": [
         "Inconsistent metrics across systems",
         "Limited self-service capabilities",
@@ -48,13 +66,31 @@
       "id": "analyst",
       "name": "Data Analyst",
       "role": "Analytics Team Member",
-      "capabilities": {
-        "dataVisualization": 4,
-        "dataAnalysis": 5,
-        "selfService": 4,
-        "dataSystems": 3,
-        "dataQuality": 4
-      },
+      "responsibilities": [
+        "Create and maintain data reports",
+        "Support data-driven decision making",
+        "Perform data quality checks"
+      ],
+      "businessGoals": [
+        "Provide accurate, timely insights",
+        "Improve data accessibility",
+        "Develop reusable analytics solutions"
+      ],
+      "criticalDecisions": [
+        "Data source selection",
+        "Analysis methodology",
+        "Data visualization approach"
+      ],
+      "informationNeeds": [
+        "Raw data access",
+        "System metadata",
+        "Business context for analyses"
+      ],
+      "dataConsumptionPreferences": [
+        "Direct database access",
+        "Self-service reporting tools",
+        "API connections to source systems"
+      ],
       "painPoints": [
         "Data access limitations",
         "Manual data reconciliation",
