@@ -189,19 +189,12 @@
       "Direct Query",
       "Batch Export"
     ],
-    "capabilityLevels": {
-      "1": "Novice - Basic awareness only",
-      "2": "Basic - Can use with guidance",
-      "3": "Intermediate - Independent with common tasks",
-      "4": "Advanced - Can perform complex operations",
-      "5": "Expert - Can train others, deep expertise"
-    },
-    "standardCapabilityTypes": [
-      "dataVisualization",
-      "dataAnalysis",
-      "selfService",
-      "dataSystems",
-      "dataQuality"
+    "personaDimensions": [
+      "responsibilities",
+      "businessGoals",
+      "criticalDecisions",
+      "informationNeeds",
+      "dataConsumptionPreferences"
     ]
   }
 }
