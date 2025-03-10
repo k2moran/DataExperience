@@ -303,6 +303,16 @@ function renderPersonaDetail() {
       <div class="empty-column"></div>
     </div>
       
+      <h3>Primary Platforms</h3>
+      <div class="grid" style="margin-bottom: 20px;">
+        ${usedPlatforms.map(platform => `
+          <div class="item" onclick="selectPlatform('${platform.id}')">
+            <div class="item-title">${platform.name}</div>
+            <div class="item-subtitle">${platform.description}</div>
+          </div>
+        `).join('')}
+      </div>
+      
       <h3>User Journeys</h3>
       ${personaJourneys.length > 0 ? `
         <div style="display: flex; flex-direction: column; gap: 10px;">
