@@ -6,24 +6,6 @@
  * Main render function to determine what to display
  */
 function renderContent() {
-  // Remove all the filter indicator code
-  // (Don't create filterIndicator and don't set filterBannerEl)
-  
-  switch(activeView) {
-    case 'overview':
-      renderOverview();
-      break;
-    // Other cases remain the same
-  }
-}
-  
-  // Display filter banner if needed
-  const filterBannerEl = document.getElementById('filterBanner');
-  if (filterBannerEl) {
-    filterBannerEl.innerHTML = filterIndicator;
-    filterBannerEl.style.display = filterIndicator ? 'flex' : 'none';
-  }
-  
   switch(activeView) {
     case 'overview':
       renderOverview();
