@@ -263,52 +263,45 @@ function renderPersonaDetail() {
       <p style="color: #666; margin-bottom: 20px;">${persona.role}</p>
       
       <div class="persona-columns">
-        <!-- Column 1 -->
-        <div class="persona-column">
-          <h3>Key Responsibilities</h3>
-          <ul class="persona-list">
-            ${(persona.responsibilities || []).map(item => `<li>${item}</li>`).join('')}
-          </ul>
-          
-          <h3>Business Goals</h3>
-          <ul class="persona-list">
-            ${(persona.businessGoals || []).map(item => `<li>${item}</li>`).join('')}
-          </ul>
-          
-          <h3>Critical Decisions</h3>
-          <ul class="persona-list">
-            ${(persona.criticalDecisions || []).map(item => `<li>${item}</li>`).join('')}
-          </ul>
-        </div>
+      <!-- Column 1 -->
+      <div class="persona-column">
+        <h3>Key Responsibilities</h3>
+        <ul class="persona-list">
+          ${(persona.responsibilities || []).map(item => `<li>${item}</li>`).join('')}
+        </ul>
         
-        <!-- Column 2 -->
-        <div class="persona-column">
-          <h3>Information Needs</h3>
-          <ul class="persona-list">
-            ${(persona.informationNeeds || []).map(item => `<li>${item}</li>`).join('')}
-          </ul>
-          
-          <h3>Data Consumption Preferences</h3>
-          <ul class="persona-list">
-            ${(persona.dataConsumptionPreferences || []).map(item => `<li>${item}</li>`).join('')}
-          </ul>
-          
-          <h3>Pain Points</h3>
-          <ul class="pain-point-list">
-            ${persona.painPoints.map(point => `<li>${point}</li>`).join('')}
-          </ul>
-        </div>
+        <h3>Business Goals</h3>
+        <ul class="persona-list">
+          ${(persona.businessGoals || []).map(item => `<li>${item}</li>`).join('')}
+        </ul>
+        
+        <h3>Critical Decisions</h3>
+        <ul class="persona-list">
+          ${(persona.criticalDecisions || []).map(item => `<li>${item}</li>`).join('')}
+        </ul>
       </div>
       
-      <h3>Primary Platforms</h3>
-      <div class="grid" style="margin-bottom: 20px;">
-        ${usedPlatforms.map(platform => `
-          <div class="item" onclick="selectPlatform('${platform.id}')">
-            <div class="item-title">${platform.name}</div>
-            <div class="item-subtitle">${platform.description}</div>
-          </div>
-        `).join('')}
+      <!-- Column 2 -->
+      <div class="persona-column">
+        <h3>Information Needs</h3>
+        <ul class="persona-list">
+          ${(persona.informationNeeds || []).map(item => `<li>${item}</li>`).join('')}
+        </ul>
+        
+        <h3>Data Consumption Preferences</h3>
+        <ul class="persona-list">
+          ${(persona.dataConsumptionPreferences || []).map(item => `<li>${item}</li>`).join('')}
+        </ul>
+        
+        <h3>Pain Points</h3>
+        <ul class="pain-point-list">
+          ${persona.painPoints.map(point => `<li>${point}</li>`).join('')}
+        </ul>
       </div>
+      
+      <!-- Empty third column -->
+      <div class="empty-column"></div>
+    </div>
       
       <h3>User Journeys</h3>
       ${personaJourneys.length > 0 ? `
