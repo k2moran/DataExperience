@@ -270,25 +270,10 @@ function renderPlatformDetail() {
  * Render persona detail view - UPDATED VERSION
  */
 function renderPersonaDetail() {
-  // ...keep existing code...
-  
-  let html = `
-    <div class="card">
-      <div class="section-header">
-        <h2>${persona.name}</h2>
-        <div class="button-group">
-          <button class="add-new-btn" onclick="openEditPersonaModal('${persona.id}')">Edit Persona</button>
-          <button class="filter-btn" onclick="selectPersona('${persona.id}', true)">Filter Data by this Persona</button>
-        </div>
-      </div>
-      <p style="color: #666; margin-bottom: 20px;">${persona.role}</p>
-      
-      <!-- Rest of persona details... -->
-    </div>
-  `;
-  
-  mainContent.innerHTML = html;
-}
+  if (!selectedPersona) {
+    // Code for persona list view...
+    return;
+  }
   
   const persona = appData.personas.find(p => p.id === selectedPersona);
   if (!persona) {
@@ -308,7 +293,10 @@ function renderPersonaDetail() {
     <div class="card">
       <div class="section-header">
         <h2>${persona.name}</h2>
-        <button class="add-new-btn" onclick="openEditPersonaModal('${persona.id}')">Edit Persona</button>
+        <div class="button-group">
+          <button class="add-new-btn" onclick="openEditPersonaModal('${persona.id}')">Edit Persona</button>
+          <button class="filter-btn" onclick="selectPersona('${persona.id}', true)">Filter Data by this Persona</button>
+        </div>
       </div>
       <p style="color: #666; margin-bottom: 20px;">${persona.role}</p>
       
