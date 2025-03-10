@@ -313,14 +313,14 @@ function renderPersonaDetail() {
   );
   
   let html = `
-    <div class="card">
-      <div class="section-header">
-        <h2>${persona.name}</h2>
-        <div class="button-group">
-          <button class="add-new-btn" onclick="openEditPersonaModal('${persona.id}')">Edit Persona</button>
-          <button class="filter-btn" onclick="selectPersona('${persona.id}', true)">Filter Data by this Persona</button>
-        </div>
+  <div class="card">
+    <div class="section-header">
+      <h2>${persona.name}</h2>
+      <div class="button-group">
+        <button class="add-new-btn" onclick="openEditPersonaModal('${persona.id}')">Edit Persona</button>
+        <!-- Remove the Filter button -->
       </div>
+    </div>
       <p style="color: #666; margin-bottom: 20px;">${persona.role}</p>
       
       <h3>Key Responsibilities</h3>
@@ -380,6 +380,14 @@ function renderPersonaDetail() {
   
   mainContent.innerHTML = html;
 }
+
+// In setupEventListeners(), modify the overview button listener:
+overviewBtn.addEventListener('click', () => {
+  setActiveView('overview');
+  // Clear filters when navigating to overview
+  clearFilters();
+  renderContent();
+});
 
 /**
  * Render journey detail view
