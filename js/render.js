@@ -271,7 +271,30 @@ function renderPlatformDetail() {
  */
 function renderPersonaDetail() {
   if (!selectedPersona) {
-    // Code for persona list view...
+    let personasToShow = appData.personas;
+    
+    // Apply filtering if needed
+    if (filterMode === 'persona') {
+      personasToShow = personasToShow.filter(p => p.id === filterEntity);
+    }
+    
+    mainContent.innerHTML = `
+      <div class="card">
+        <div class="section-header">
+          <h2>Personas</h2>
+          <button class="add-new-btn" onclick="openAddPersonaModal()">+ Add Persona</button>
+        </div>
+        <p>Select a persona to view details</p>
+        <div class="persona-list">
+          ${personasToShow.map(persona => `
+            <div class="item" onclick="selectPersona('${persona.id}')">
+              <div class="item-title">${persona.name}</div>
+              <div class="item-subtitle">${persona.role}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
     return;
   }
   
