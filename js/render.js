@@ -236,30 +236,7 @@ function renderPlatformDetail() {
  */
 function renderPersonaDetail() {
   if (!selectedPersona) {
-    let personasToShow = appData.personas;
-    
-    // Apply filtering if needed
-    if (filterMode === 'persona') {
-      personasToShow = personasToShow.filter(p => p.id === filterEntity);
-    }
-    
-    mainContent.innerHTML = `
-      <div class="card">
-        <div class="section-header">
-          <h2>Personas</h2>
-          <button class="add-new-btn" onclick="openAddPersonaModal()">+ Add Persona</button>
-        </div>
-        <p>Select a persona to view details</p>
-        <div class="persona-list">
-          ${personasToShow.map(persona => `
-            <div class="item" onclick="selectPersona('${persona.id}')">
-              <div class="item-title">${persona.name}</div>
-              <div class="item-subtitle">${persona.role}</div>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-    `;
+    // Existing code for when no persona is selected
     return;
   }
   
@@ -278,45 +255,50 @@ function renderPersonaDetail() {
   );
   
   let html = `
-  <div class="card">
-    <div class="section-header">
-      <h2>${persona.name}</h2>
-      <div class="button-group">
+    <div class="card">
+      <div class="section-header">
+        <h2>${persona.name}</h2>
         <button class="add-new-btn" onclick="openEditPersonaModal('${persona.id}')">Edit Persona</button>
-        <!-- Remove the Filter button -->
       </div>
-    </div>
       <p style="color: #666; margin-bottom: 20px;">${persona.role}</p>
       
-      <h3>Key Responsibilities</h3>
-      <ul class="persona-list">
-        ${(persona.responsibilities || []).map(item => `<li>${item}</li>`).join('')}
-      </ul>
-      
-      <h3>Business Goals</h3>
-      <ul class="persona-list">
-        ${(persona.businessGoals || []).map(item => `<li>${item}</li>`).join('')}
-      </ul>
-      
-      <h3>Critical Decisions</h3>
-      <ul class="persona-list">
-        ${(persona.criticalDecisions || []).map(item => `<li>${item}</li>`).join('')}
-      </ul>
-      
-      <h3>Information Needs</h3>
-      <ul class="persona-list">
-        ${(persona.informationNeeds || []).map(item => `<li>${item}</li>`).join('')}
-      </ul>
-      
-      <h3>Data Consumption Preferences</h3>
-      <ul class="persona-list">
-        ${(persona.dataConsumptionPreferences || []).map(item => `<li>${item}</li>`).join('')}
-      </ul>
-      
-      <h3>Pain Points</h3>
-      <ul class="pain-point-list">
-        ${persona.painPoints.map(point => `<li>${point}</li>`).join('')}
-      </ul>
+      <div class="persona-columns">
+        <!-- Column 1 -->
+        <div class="persona-column">
+          <h3>Key Responsibilities</h3>
+          <ul class="persona-list">
+            ${(persona.responsibilities || []).map(item => `<li>${item}</li>`).join('')}
+          </ul>
+          
+          <h3>Business Goals</h3>
+          <ul class="persona-list">
+            ${(persona.businessGoals || []).map(item => `<li>${item}</li>`).join('')}
+          </ul>
+          
+          <h3>Critical Decisions</h3>
+          <ul class="persona-list">
+            ${(persona.criticalDecisions || []).map(item => `<li>${item}</li>`).join('')}
+          </ul>
+        </div>
+        
+        <!-- Column 2 -->
+        <div class="persona-column">
+          <h3>Information Needs</h3>
+          <ul class="persona-list">
+            ${(persona.informationNeeds || []).map(item => `<li>${item}</li>`).join('')}
+          </ul>
+          
+          <h3>Data Consumption Preferences</h3>
+          <ul class="persona-list">
+            ${(persona.dataConsumptionPreferences || []).map(item => `<li>${item}</li>`).join('')}
+          </ul>
+          
+          <h3>Pain Points</h3>
+          <ul class="pain-point-list">
+            ${persona.painPoints.map(point => `<li>${point}</li>`).join('')}
+          </ul>
+        </div>
+      </div>
       
       <h3>Primary Platforms</h3>
       <div class="grid" style="margin-bottom: 20px;">
