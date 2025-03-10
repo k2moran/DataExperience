@@ -29,21 +29,7 @@ function renderOverview() {
   // Ensure sources exists and is an array
   const sources = Array.isArray(appData.sources) ? appData.sources : [];
 
-  .card {
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 20px; /* Increase from 10px to 20px */
-    margin: 0;     /* Remove auto margin */
-    margin-bottom: 20px;
-    height: 100%;  /* Make cards fill their container height */
-}
 
-  .card-wrapper {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
   // Apply filters to each section if needed
   let personasToShow = appData.personas;
   let journeysToShow = appData.journeys;
