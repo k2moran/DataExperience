@@ -457,14 +457,3 @@ button.active {
   margin-bottom: 30px;
 }
 
-.persona-column {
-  /* Add any additional styling for columns if needed */
-}
-
-/* Responsive adjustment for mobile */
-@media (max-width: 50px) {
-  .persona-columns {
-    grid-template-columns: 1fr;
-    gap: 1px;
-  }
-}
