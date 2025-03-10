@@ -453,16 +453,15 @@ button.active {
 
 /* Two-column layout for persona details */
 
+/* Three-column layout with the third column empty */
 .persona-columns {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 5fr 5fr 2fr; /* Adjust the ratio as needed */
+  gap: 20px;
   margin-bottom: 30px;
 }
 
-.persona-column:first-child {
-  margin-right: -20px;
-}
-
-.persona-column {
-  width: 48%; /* Slightly less than 50% to allow for spacing */
+/* Add a class for the empty column if needed */
+.empty-column {
+  /* You can leave this empty or add subtle styling */
 }
