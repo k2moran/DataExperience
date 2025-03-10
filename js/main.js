@@ -182,11 +182,13 @@ function selectSource(id) {
 function selectPersona(id) {
   selectedPersona = id;
   
-  // Automatically enable filtering when a persona is selected
+  // Enable filtering without changing the view
   filterMode = 'persona';
   filterEntity = id;
   
-  setActiveView('personas');
+  // Don't change active view
+  // setActiveView('personas'); <- Remove this line
+  
   renderContent();
 }
 
