@@ -81,18 +81,18 @@ async function initializeApp() {
     setupEventListeners();
     
     // Render initial content
-    renderContent();
-  } catch (error) {
-    console.error('Failed to initialize application:', error);
-    mainContent.innerHTML = `
-      <div class="card">
-        <h2>Error Loading Application</h2>
-        <p>There was a problem loading the application data. Please try refreshing the page.</p>
-        <p>Error details: ${error.message}</p>
-        <pre>${error.stack}</pre>
-      </div>
-    `;
-  }
+       if (typeof renderContent === 'function') {
+      renderContent();
+    } else {
+      console.error('renderContent function not found. Check if render.js is loaded properly.');
+      // Display an error message
+      mainContent.innerHTML = `
+        <div class="card">
+          <h2>Error Loading Application</h2>
+          <p>Application resources failed to load properly. Please try refreshing the page.</p>
+        </div>
+      `;
+    }
 }
 
 /**
