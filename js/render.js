@@ -367,7 +367,9 @@ function renderPersonaDetail() {
 // In setupEventListeners(), remove any code that clears filters:
 overviewBtn.addEventListener('click', () => {
   setActiveView('overview');
-  // Remove any clearFilters() call here
+  // Clear filters when going to overview
+  filterMode = null;
+  filterEntity = null;
   renderContent();
 });
 
