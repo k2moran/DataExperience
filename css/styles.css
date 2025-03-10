@@ -84,8 +84,8 @@ button.active {
 
 .grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr); /* Change to 4 columns */
-    gap: 1px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px; /* Increase from 1px to 20px for more consistent spacing */
 }
 
 /* Item Styles */
