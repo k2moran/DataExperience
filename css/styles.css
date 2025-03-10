@@ -454,7 +454,7 @@ button.active {
 /* Three-column layout with the third column empty */
 .persona-columns {
   display: grid;
-  grid-template-columns: 5fr 5fr 2fr; /* Adjust the ratio as needed */
+  grid-template-columns: 5fr 5fr 3fr; /* Adjust the ratio as needed */
   gap: 20px;
   margin-bottom: 30px;
 }
