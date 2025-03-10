@@ -451,9 +451,11 @@ button.active {
 
 /* Two-column layout for persona details */
 .persona-columns {
-  display: grid;
-  grid-template-columns: calc(50% - 10px) calc(50% - 10px);
-  gap: 20px;
+  display: flex;
+  justify-content: space-between;
   margin-bottom: 30px;
 }
 
+.persona-column {
+  width: 48%; /* Slightly less than 50% to allow for spacing */
+}
