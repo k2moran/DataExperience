@@ -380,6 +380,54 @@ button.active {
     color: #666;
 }
 
+/* Filter Styles */
+.filter-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #e0f2fe;
+  border-left: 4px solid #0284c7;
+  padding: 10px 15px;
+  margin-bottom: 15px;
+  border-radius: 0 4px 4px 0;
+}
+
+.filter-banner button {
+  background-color: #0284c7;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.filter-message {
+  background-color: #e0f2fe;
+  border-left: 4px solid #0284c7;
+  padding: 10px 15px;
+  margin-bottom: 20px;
+  border-radius: 0 4px 4px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+}
+
+.filter-btn {
+  background-color: #0284c7;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+
 /* Responsive Styles */
 @media (max-width: 268px) {
     .grid {
