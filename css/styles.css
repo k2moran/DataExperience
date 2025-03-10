@@ -453,7 +453,7 @@ button.active {
 .persona-columns {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 5px;
+  gap: 1px;
   margin-bottom: 30px;
 }
 
@@ -462,9 +462,9 @@ button.active {
 }
 
 /* Responsive adjustment for mobile */
-@media (max-width: 200px) {
+@media (max-width: 50px) {
   .persona-columns {
     grid-template-columns: 1fr;
-    gap: 5px;
+    gap: 1px;
   }
 }
