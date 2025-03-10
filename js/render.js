@@ -6,17 +6,14 @@
  * Main render function to determine what to display
  */
 function renderContent() {
-  // Add filter indicator if filtering is active
-  let filterIndicator = '';
-if (filterMode === 'persona') {
-  const persona = appData.personas.find(p => p.id === filterEntity);
-  if (persona) {
-    filterIndicator = `
-      <div class="filter-banner">
-        <p>Filtering by Persona: <strong>${persona.name}</strong></p>
-        <!-- Remove the Clear Filter button -->
-      </div>
-    `;
+  // Remove all the filter indicator code
+  // (Don't create filterIndicator and don't set filterBannerEl)
+  
+  switch(activeView) {
+    case 'overview':
+      renderOverview();
+      break;
+    // Other cases remain the same
   }
 }
   
@@ -50,19 +47,6 @@ function renderOverview() {
   // Ensure sources exists and is an array
   const sources = Array.isArray(appData.sources) ? appData.sources : [];
   
-  // Filter message for persona filtering
-  let filterMessage = '';
-if (filterMode === 'persona') {
-  const persona = appData.personas.find(p => p.id === filterEntity);
-  if (persona) {
-    filterMessage = `
-      <div class="filter-message">
-        <p>Showing items related to persona: <strong>${persona.name}</strong></p>
-        <!-- Remove the Clear Filter button -->
-      </div>
-    `;
-  }
-}
   
   // Apply filters to each section if needed
   let personasToShow = appData.personas;
@@ -94,7 +78,6 @@ if (filterMode === 'persona') {
   }
 
   let html = `
-    ${filterMessage}
     <div class="grid">
       <div class="card">
         <div class="section-header">
