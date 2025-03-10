@@ -28,8 +28,22 @@ function renderContent() {
 function renderOverview() {
   // Ensure sources exists and is an array
   const sources = Array.isArray(appData.sources) ? appData.sources : [];
-  
-  
+
+  .card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px; /* Increase from 10px to 20px */
+    margin: 0;     /* Remove auto margin */
+    margin-bottom: 20px;
+    height: 100%;  /* Make cards fill their container height */
+}
+
+  .card-wrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
   // Apply filters to each section if needed
   let personasToShow = appData.personas;
   let journeysToShow = appData.journeys;
@@ -61,11 +75,13 @@ function renderOverview() {
 
   let html = `
     <div class="grid">
+      <div class="card-wrapper">
       <div class="card">
         <div class="section-header">
           <h2>User Personas</h2>
           <button class="add-new-btn" onclick="openAddPersonaModal()">+ Add Persona</button>
         </div>
+      </div>  
         <div class="persona-list">
           ${personasToShow.map(persona => `
             <div class="item" onclick="selectPersona('${persona.id}')">
@@ -77,10 +93,12 @@ function renderOverview() {
       </div>
       
       <div class="card">
+        <div class="card-wrapper">
         <div class="section-header">
           <h2>User Journeys</h2>
           <button class="add-new-btn" onclick="openAddJourneyModal()">+ Add Journey</button>
         </div>
+      </div>
         <div class="journey-list">
           ${journeysToShow.map(journey => {
             const persona = appData.personas.find(p => p.id === journey.persona);
@@ -95,10 +113,12 @@ function renderOverview() {
       </div>
 
       <div class="card">
+      <div class="card-wrapper">
         <div class="section-header">
           <h2>Platforms</h2>
           <button class="add-new-btn" onclick="openAddPlatformModal()">+ Add Platform</button>
         </div>
+      </div>
         <div class="platform-list">
           ${platformsToShow.map(platform => `
             <div class="item" onclick="selectPlatform('${platform.id}')">
@@ -110,10 +130,12 @@ function renderOverview() {
       </div>
 
       <div class="card">
+      <div class="card-wrapper">
         <div class="section-header">
           <h2>Data Sources</h2>
           <button class="add-new-btn" onclick="openAddSourceModal()">+ Add Source</button>
         </div>
+      </div>
         <div class="source-list">
           ${sourcesToShow.map(source => `
             <div class="item" onclick="selectSource('${source.id}')">
