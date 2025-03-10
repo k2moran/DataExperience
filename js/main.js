@@ -179,14 +179,12 @@ function selectSource(id) {
  * Helper function to select a persona
  * @param {string} id - Persona ID
  */
-
-function selectPersona(id, enableFiltering = false) {
+function selectPersona(id) {
   selectedPersona = id;
   
-  if (enableFiltering) {
-    filterMode = 'persona';
-    filterEntity = id;
-  }
+  // Automatically enable filtering when a persona is selected
+  filterMode = 'persona';
+  filterEntity = id;
   
   setActiveView('personas');
   renderContent();
