@@ -6,6 +6,27 @@
  * Main render function to determine what to display
  */
 function renderContent() {
+  // Add filter indicator if filtering is active
+  let filterIndicator = '';
+  if (filterMode === 'persona') {
+    const persona = appData.personas.find(p => p.id === filterEntity);
+    if (persona) {
+      filterIndicator = `
+        <div class="filter-banner">
+          <p>Filtering by Persona: <strong>${persona.name}</strong></p>
+          <button onclick="clearFilters()">Clear Filter</button>
+        </div>
+      `;
+    }
+  }
+  
+  // Display filter banner if needed
+  const filterBannerEl = document.getElementById('filterBanner');
+  if (filterBannerEl) {
+    filterBannerEl.innerHTML = filterIndicator;
+    filterBannerEl.style.display = filterIndicator ? 'flex' : 'none';
+  }
+  
   switch(activeView) {
     case 'overview':
       renderOverview();
@@ -28,8 +49,52 @@ function renderContent() {
 function renderOverview() {
   // Ensure sources exists and is an array
   const sources = Array.isArray(appData.sources) ? appData.sources : [];
+  
+  // Filter message for persona filtering
+  let filterMessage = '';
+  if (filterMode === 'persona') {
+    const persona = appData.personas.find(p => p.id === filterEntity);
+    if (persona) {
+      filterMessage = `
+        <div class="filter-message">
+          <p>Showing items related to persona: <strong>${persona.name}</strong></p>
+          <button onclick="clearFilters()">Clear Filter</button>
+        </div>
+      `;
+    }
+  }
+  
+  // Apply filters to each section if needed
+  let personasToShow = appData.personas;
+  let journeysToShow = appData.journeys;
+  let platformsToShow = appData.platforms;
+  let sourcesToShow = sources;
+  
+  if (filterMode === 'persona') {
+    // Filter to show only the selected persona
+    personasToShow = personasToShow.filter(p => p.id === filterEntity);
+    
+    // Filter journeys for the selected persona
+    journeysToShow = journeysToShow.filter(j => j.persona === filterEntity);
+    
+    // Filter platforms used by the selected persona
+    const persona = appData.personas.find(p => p.id === filterEntity);
+    if (persona && persona.primaryPlatforms) {
+      platformsToShow = platformsToShow.filter(p => 
+        persona.primaryPlatforms.includes(p.id)
+      );
+      
+      // Filter sources associated with the persona's platforms
+      sourcesToShow = sourcesToShow.filter(source => 
+        source.associatedPlatforms.some(platformId => 
+          persona.primaryPlatforms.includes(platformId)
+        )
+      );
+    }
+  }
 
   let html = `
+    ${filterMessage}
     <div class="grid">
       <div class="card">
         <div class="section-header">
@@ -37,7 +102,7 @@ function renderOverview() {
           <button class="add-new-btn" onclick="openAddPersonaModal()">+ Add Persona</button>
         </div>
         <div class="persona-list">
-          ${appData.personas.map(persona => `
+          ${personasToShow.map(persona => `
             <div class="item" onclick="selectPersona('${persona.id}')">
               <div class="item-title">${persona.name}</div>
               <div class="item-subtitle">${persona.role}</div>
@@ -52,7 +117,7 @@ function renderOverview() {
           <button class="add-new-btn" onclick="openAddJourneyModal()">+ Add Journey</button>
         </div>
         <div class="journey-list">
-          ${appData.journeys.map(journey => {
+          ${journeysToShow.map(journey => {
             const persona = appData.personas.find(p => p.id === journey.persona);
             return `
               <div class="item" onclick="selectJourney('${journey.id}')">
@@ -70,7 +135,7 @@ function renderOverview() {
           <button class="add-new-btn" onclick="openAddPlatformModal()">+ Add Platform</button>
         </div>
         <div class="platform-list">
-          ${appData.platforms.map(platform => `
+          ${platformsToShow.map(platform => `
             <div class="item" onclick="selectPlatform('${platform.id}')">
               <div class="item-title">${platform.name}</div>
               <div class="item-subtitle">${platform.description}</div>
@@ -85,7 +150,7 @@ function renderOverview() {
           <button class="add-new-btn" onclick="openAddSourceModal()">+ Add Source</button>
         </div>
         <div class="source-list">
-          ${sources.map(source => `
+          ${sourcesToShow.map(source => `
             <div class="item" onclick="selectSource('${source.id}')">
               <div class="item-title">${source.name}</div>
               <div class="item-subtitle">${source.type}</div>
@@ -104,6 +169,18 @@ function renderOverview() {
  */
 function renderPlatformDetail() {
   if (!selectedPlatform) {
+    let platformsToShow = appData.platforms;
+    
+    // Apply persona filtering if active
+    if (filterMode === 'persona' && filterEntity) {
+      const persona = appData.personas.find(p => p.id === filterEntity);
+      if (persona && persona.primaryPlatforms) {
+        platformsToShow = platformsToShow.filter(platform => 
+          persona.primaryPlatforms.includes(platform.id)
+        );
+      }
+    }
+    
     mainContent.innerHTML = `
       <div class="card">
         <div class="section-header">
@@ -111,9 +188,8 @@ function renderPlatformDetail() {
           <button class="add-new-btn" onclick="openAddPlatformModal()">+ Add Platform</button>
         </div>
         <p>Select a platform to view details</p>
-        <div class="grid platform-grid">
         <div class="platform-list">
-          ${appData.platforms.map(platform => `
+          ${platformsToShow.map(platform => `
             <div class="item" onclick="selectPlatform('${platform.id}')">
               <div class="item-title">${platform.name}</div>
               <div class="item-subtitle">${platform.description}</div>
@@ -194,26 +270,25 @@ function renderPlatformDetail() {
  * Render persona detail view - UPDATED VERSION
  */
 function renderPersonaDetail() {
-  if (!selectedPersona) {
-    mainContent.innerHTML = `
-      <div class="card">
-        <div class="section-header">
-          <h2>Personas</h2>
-          <button class="add-new-btn" onclick="openAddPersonaModal()">+ Add Persona</button>
-        </div>
-        <p>Select a persona to view details</p>
-        <div class="persona-list">
-          ${appData.personas.map(persona => `
-            <div class="item" onclick="selectPersona('${persona.id}')">
-              <div class="item-title">${persona.name}</div>
-              <div class="item-subtitle">${persona.role}</div>
-            </div>
-          `).join('')}
+  // ...keep existing code...
+  
+  let html = `
+    <div class="card">
+      <div class="section-header">
+        <h2>${persona.name}</h2>
+        <div class="button-group">
+          <button class="add-new-btn" onclick="openEditPersonaModal('${persona.id}')">Edit Persona</button>
+          <button class="filter-btn" onclick="selectPersona('${persona.id}', true)">Filter Data by this Persona</button>
         </div>
       </div>
-    `;
-    return;
-  }
+      <p style="color: #666; margin-bottom: 20px;">${persona.role}</p>
+      
+      <!-- Rest of persona details... -->
+    </div>
+  `;
+  
+  mainContent.innerHTML = html;
+}
   
   const persona = appData.personas.find(p => p.id === selectedPersona);
   if (!persona) {
@@ -300,6 +375,13 @@ function renderPersonaDetail() {
  */
 function renderJourneyDetail() {
   if (!selectedJourney) {
+    let journeysToShow = appData.journeys;
+    
+    // Apply persona filtering if active
+    if (filterMode === 'persona' && filterEntity) {
+      journeysToShow = journeysToShow.filter(journey => journey.persona === filterEntity);
+    }
+    
     mainContent.innerHTML = `
       <div class="card">
         <div class="section-header">
@@ -307,9 +389,8 @@ function renderJourneyDetail() {
           <button class="add-new-btn" onclick="openAddJourneyModal()">+ Add Journey</button>
         </div>
         <p>Select a journey to view details</p>
-        <div class="grid journey-grid">
         <div class="journey-list">
-          ${appData.journeys.map(journey => {
+          ${journeysToShow.map(journey => {
             const persona = appData.personas.find(p => p.id === journey.persona);
             return `
               <div class="item" onclick="selectJourney('${journey.id}')">
@@ -387,6 +468,21 @@ function renderJourneyDetail() {
  */
 function renderSourceDetail() {
   if (!selectedSource) {
+    let sourcesToShow = appData.sources;
+    
+    // Apply persona filtering if active
+    if (filterMode === 'persona' && filterEntity) {
+      const persona = appData.personas.find(p => p.id === filterEntity);
+      if (persona && persona.primaryPlatforms) {
+        // Show sources associated with the persona's primary platforms
+        sourcesToShow = sourcesToShow.filter(source => 
+          source.associatedPlatforms.some(platformId => 
+            persona.primaryPlatforms.includes(platformId)
+          )
+        );
+      }
+    }
+    
     mainContent.innerHTML = `
       <div class="card">
         <div class="section-header">
@@ -394,9 +490,8 @@ function renderSourceDetail() {
           <button class="add-new-btn" onclick="openAddSourceModal()">+ Add Source</button>
         </div>
         <p>Select a source to view details</p>
-        <div class="grid source-grid">
         <div class="source-list">
-          ${appData.sources.map(source => `
+          ${sourcesToShow.map(source => `
             <div class="item" onclick="selectSource('${source.id}')">
               <div class="item-title">${source.name}</div>
               <div class="item-subtitle">${source.type}</div>
