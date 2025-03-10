@@ -5,10 +5,12 @@
 // Application state
 let appData = null;
 let activeView = 'overview';
-let selectedSource = null;  // New state for sources
+let selectedSource = null;
 let selectedPlatform = null;
 let selectedPersona = null;
 let selectedJourney = null;
+let filterMode = null; // Add this line - can be 'persona', 'platform', etc.
+let filterEntity = null; // Add this line - stores the ID of what we're filtering by
 
 // DOM elements
 const mainContent = document.getElementById('mainContent');
@@ -174,22 +176,31 @@ function selectSource(id) {
 }
 
 /**
- * Helper function to select a platform
- * @param {string} id - Platform ID
- */
-function selectPlatform(id) {
-  selectedPlatform = id;
-  setActiveView('platforms');
-  renderContent();
-}
-
-/**
  * Helper function to select a persona
  * @param {string} id - Persona ID
  */
-function selectPersona(id) {
+
+function selectPersona(id, enableFiltering = false) {
   selectedPersona = id;
+  
+  if (enableFiltering) {
+    filterMode = 'persona';
+    filterEntity = id;
+  }
+  
   setActiveView('personas');
+  renderContent();
+}
+
+function selectPlatform(id, enableFiltering = false) {
+  selectedPlatform = id;
+  
+  if (enableFiltering) {
+    filterMode = 'platform';
+    filterEntity = id;
+  }
+  
+  setActiveView('platforms');
   renderContent();
 }
 
@@ -197,9 +208,16 @@ function selectPersona(id) {
  * Helper function to select a journey
  * @param {string} id - Journey ID
  */
+
 function selectJourney(id) {
   selectedJourney = id;
   setActiveView('journeys');
+  renderContent();
+}
+
+function clearFilters() {
+  filterMode = null;
+  filterEntity = null;
   renderContent();
 }
 
