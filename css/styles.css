@@ -462,7 +462,7 @@ button.active {
 }
 
 /* Responsive adjustment for mobile */
-@media (max-width: 768px) {
+@media (max-width: 400px) {
   .persona-columns {
     grid-template-columns: 1fr;
     gap: 15px;
