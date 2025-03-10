@@ -100,9 +100,12 @@ async function initializeApp() {
  */
 function setupEventListeners() {
   overviewBtn.addEventListener('click', () => {
-    setActiveView('overview');
-    renderContent();
-  });
+  setActiveView('overview');
+  // Clear filters when going to overview
+  filterMode = null;
+  filterEntity = null;
+  renderContent();
+});
 
     // Navigation buttons
   sourcesBtn.addEventListener('click', () => {
