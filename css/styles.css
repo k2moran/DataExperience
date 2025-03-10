@@ -448,3 +448,23 @@ button.active {
         min-width: 80px;
     }
 }
+
+/* Two-column layout for persona details */
+.persona-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+.persona-column {
+  /* Add any additional styling for columns if needed */
+}
+
+/* Responsive adjustment for mobile */
+@media (max-width: 768px) {
+  .persona-columns {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+}
