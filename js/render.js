@@ -59,34 +59,30 @@ function renderOverview() {
     }
   }
 
-  let html = `
-    <div class="grid">
-      <div class="card-wrapper">
-      <div class="card">
-        <div class="section-header">
-          <h2>User Personas</h2>
-          <button class="add-new-btn" onclick="openAddPersonaModal()">+ Add Persona</button>
-        </div>
-      </div>  
-        <div class="persona-list">
-          ${personasToShow.map(persona => `
-            <div class="item" onclick="selectPersona('${persona.id}')">
-              <div class="item-title">${persona.name}</div>
-              <div class="item-subtitle">${persona.role}</div>
-            </div>
-          `).join('')}
-        </div>
+ let html = `
+  <div class="grid">
+    <div class="card">
+      <div class="section-header">
+        <h2>User Personas</h2>
+        <button class="add-new-btn" onclick="openAddPersonaModal()">+ Add Persona</button>
       </div>
-      
-      <div class="card">
-        <div class="card-wrapper">
-        <div class="section-header">
-          <h2>User Journeys</h2>
-          <button class="add-new-btn" onclick="openAddJourneyModal()">+ Add Journey</button>
-        </div>
+      <div class="persona-list">
+        ${personasToShow.map(persona => `
+          <div class="item" onclick="selectPersona('${persona.id}')">
+            <div class="item-title">${persona.name}</div>
+            <div class="item-subtitle">${persona.role}</div>
+          </div>
+        `).join('')}
       </div>
-        <div class="journey-list">
-          ${journeysToShow.map(journey => {
+    </div>
+    
+    <div class="card">
+      <div class="section-header">
+        <h2>User Journeys</h2>
+        <button class="add-new-btn" onclick="openAddJourneyModal()">+ Add Journey</button>
+      </div>
+      <div class="journey-list">
+        ${journeysToShow.map(journey => {
             const persona = appData.personas.find(p => p.id === journey.persona);
             return `
               <div class="item" onclick="selectJourney('${journey.id}')">
