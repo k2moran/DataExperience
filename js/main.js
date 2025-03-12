@@ -9,13 +9,13 @@ let selectedSource = null;
 let selectedPlatform = null;
 let selectedPersona = null;
 let selectedJourney = null;
-let filterMode = null; // Add this line - can be 'persona', 'platform', etc.
-let filterEntity = null; // Add this line - stores the ID of what we're filtering by
+let filterMode = null; // Can be 'persona', 'platform', etc.
+let filterEntity = null; // Stores the ID of what we're filtering by
 
 // DOM elements
 const mainContent = document.getElementById('mainContent');
 const overviewBtn = document.getElementById('overviewBtn');
-const sourcesBtn = document.getElementById('sourcesBtn');  // New button
+const sourcesBtn = document.getElementById('sourcesBtn');
 const platformsBtn = document.getElementById('platformsBtn');
 const personasBtn = document.getElementById('personasBtn');
 const journeysBtn = document.getElementById('journeysBtn');
@@ -44,21 +44,26 @@ async function initializeApp() {
     } else {
       // If no saved data, fetch from JSON file
       console.log('No saved data found, loading from JSON file');
-      const response = await fetch('data/app-data.json');
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+      try {
+        const response = await fetch('data/app-data.json');
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        
+        appData = await response.json();
+        
+        // Ensure all required properties exist
+        appData.sources = appData.sources || [];
+        appData.platforms = appData.platforms || [];
+        appData.personas = appData.personas || [];
+        appData.journeys = appData.journeys || [];
+        
+        // Save the initial data to Firestore
+        await saveAppData();
+      } catch (fetchError) {
+        console.error('Error loading app-data.json:', fetchError);
+        throw new Error('Failed to load application data. Please check your connection and try again.');
       }
-      
-      appData = await response.json();
-      
-      // Ensure all required properties exist
-      appData.sources = appData.sources || [];
-      appData.platforms = appData.platforms || [];
-      appData.personas = appData.personas || [];
-      appData.journeys = appData.journeys || [];
-      
-      // Save the initial data to Firestore
-      await saveAppData();
     }
     
     // Validate constants
@@ -81,11 +86,10 @@ async function initializeApp() {
     setupEventListeners();
     
     // Render initial content
-       if (typeof renderContent === 'function') {
+    if (typeof renderContent === 'function') {
       renderContent();
     } else {
-      } catch (error) {
-         console.error('renderContent function not found. Check if render.js is loaded properly.');
+      console.error('renderContent function not found. Check if render.js is loaded properly.');
       // Display an error message
       mainContent.innerHTML = `
         <div class="card">
@@ -94,6 +98,15 @@ async function initializeApp() {
         </div>
       `;
     }
+  } catch (error) {
+    console.error('Error initializing application:', error);
+    mainContent.innerHTML = `
+      <div class="card">
+        <h2>Error Loading Application</h2>
+        <p>${error.message || 'Application failed to initialize properly.'}</p>
+        <button onclick="location.reload()" class="submit-btn">Try Again</button>
+      </div>
+    `;
   }
 }
 
@@ -102,14 +115,14 @@ async function initializeApp() {
  */
 function setupEventListeners() {
   overviewBtn.addEventListener('click', () => {
-  setActiveView('overview');
-  // Clear filters when going to overview
-  filterMode = null;
-  filterEntity = null;
-  renderContent();
-});
+    setActiveView('overview');
+    // Clear filters when going to overview
+    filterMode = null;
+    filterEntity = null;
+    renderContent();
+  });
 
-    // Navigation buttons
+  // Navigation buttons
   sourcesBtn.addEventListener('click', () => {
     setActiveView('sources');
     renderContent();
@@ -191,12 +204,14 @@ function selectPersona(id) {
   filterMode = 'persona';
   filterEntity = id;
   
-  // Don't change active view
-  // setActiveView('personas'); <- Remove this line
-  
   renderContent();
 }
 
+/**
+ * Helper function to select a platform
+ * @param {string} id - Platform ID
+ * @param {boolean} enableFiltering - Whether to enable filtering by this platform
+ */
 function selectPlatform(id, enableFiltering = false) {
   selectedPlatform = id;
   
@@ -213,13 +228,15 @@ function selectPlatform(id, enableFiltering = false) {
  * Helper function to select a journey
  * @param {string} id - Journey ID
  */
-
 function selectJourney(id) {
   selectedJourney = id;
   setActiveView('journeys');
   renderContent();
 }
 
+/**
+ * Clear any active filters
+ */
 function clearFilters() {
   filterMode = null;
   filterEntity = null;
@@ -228,4 +245,3 @@ function clearFilters() {
 
 // Initialize the application when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', initializeApp);
-  
