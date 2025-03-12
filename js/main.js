@@ -93,7 +93,7 @@ async function initializeApp() {
         </div>
       `;
     }
-
+  }
 
 /**
  * Set up event listeners for the application
