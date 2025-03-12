@@ -2,18 +2,6 @@
  * Form handling functions for the Data Experience Knowledge Center
  */
 
-/**
- * Save application data to Firestore
- */
-async function saveAppData() {
-  try {
-    await db.collection("appData").doc("mainData").set(appData);
-    console.log('Data saved successfully to Firestore');
-  } catch (error) {
-    console.error('Failed to save data to Firestore:', error);
-    alert('There was a problem saving your changes. Please try again or check console for errors.');
-  }
-}
 
 /**
  * Load application data from Firestore
