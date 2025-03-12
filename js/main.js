@@ -94,6 +94,7 @@ async function initializeApp() {
       `;
     }
   }
+}
 
 /**
  * Set up event listeners for the application
