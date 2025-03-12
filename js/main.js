@@ -84,7 +84,8 @@ async function initializeApp() {
        if (typeof renderContent === 'function') {
       renderContent();
     } else {
-      console.error('renderContent function not found. Check if render.js is loaded properly.');
+      } catch (error) {
+         console.error('renderContent function not found. Check if render.js is loaded properly.');
       // Display an error message
       mainContent.innerHTML = `
         <div class="card">
