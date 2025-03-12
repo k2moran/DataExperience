@@ -95,8 +95,7 @@ function renderOverview() {
       </div>
 
       <div class="card">
-      <div class="card-wrapper">
-        <div class="section-header">
+         <div class="section-header">
           <h2>Platforms</h2>
           <button class="add-new-btn" onclick="openAddPlatformModal()">+ Add Platform</button>
         </div>
@@ -112,7 +111,6 @@ function renderOverview() {
       </div>
 
       <div class="card">
-      <div class="card-wrapper">
         <div class="section-header">
           <h2>Data Sources</h2>
           <button class="add-new-btn" onclick="openAddSourceModal()">+ Add Source</button>
