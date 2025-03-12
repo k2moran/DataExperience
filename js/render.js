@@ -25,10 +25,12 @@ function renderContent() {
   }
 }
 
+/**
+ * Render the overview page with all sections
+ */
 function renderOverview() {
   // Ensure sources exists and is an array
   const sources = Array.isArray(appData.sources) ? appData.sources : [];
-
 
   // Apply filters to each section if needed
   let personasToShow = appData.personas;
@@ -59,30 +61,45 @@ function renderOverview() {
     }
   }
 
- let html = `
-  <div class="grid">
-    <div class="card">
-      <div class="section-header">
-        <h2>User Personas</h2>
-        <button class="add-new-btn" onclick="openAddPersonaModal()">+ Add Persona</button>
+  // Display filter banner if filtering is active
+  const filterBanner = document.getElementById('filterBanner');
+  if (filterMode === 'persona') {
+    const persona = appData.personas.find(p => p.id === filterEntity);
+    if (persona) {
+      filterBanner.innerHTML = `
+        <div>Filtering by Persona: <strong>${persona.name}</strong></div>
+        <button onclick="clearFilters()">Clear Filter</button>
+      `;
+      filterBanner.style.display = 'flex';
+    }
+  } else {
+    filterBanner.style.display = 'none';
+  }
+
+  let html = `
+    <div class="grid">
+      <div class="card">
+        <div class="section-header">
+          <h2>User Personas</h2>
+          <button class="add-new-btn" onclick="openAddPersonaModal()">+ Add Persona</button>
+        </div>
+        <div class="persona-list">
+          ${personasToShow.map(persona => `
+            <div class="item" onclick="selectPersona('${persona.id}')">
+              <div class="item-title">${persona.name}</div>
+              <div class="item-subtitle">${persona.role}</div>
+            </div>
+          `).join('')}
+        </div>
       </div>
-      <div class="persona-list">
-        ${personasToShow.map(persona => `
-          <div class="item" onclick="selectPersona('${persona.id}')">
-            <div class="item-title">${persona.name}</div>
-            <div class="item-subtitle">${persona.role}</div>
-          </div>
-        `).join('')}
-      </div>
-    </div>
-    
-    <div class="card">
-      <div class="section-header">
-        <h2>User Journeys</h2>
-        <button class="add-new-btn" onclick="openAddJourneyModal()">+ Add Journey</button>
-      </div>
-      <div class="journey-list">
-        ${journeysToShow.map(journey => {
+      
+      <div class="card">
+        <div class="section-header">
+          <h2>User Journeys</h2>
+          <button class="add-new-btn" onclick="openAddJourneyModal()">+ Add Journey</button>
+        </div>
+        <div class="journey-list">
+          ${journeysToShow.map(journey => {
             const persona = appData.personas.find(p => p.id === journey.persona);
             return `
               <div class="item" onclick="selectJourney('${journey.id}')">
@@ -95,11 +112,10 @@ function renderOverview() {
       </div>
 
       <div class="card">
-         <div class="section-header">
+        <div class="section-header">
           <h2>Platforms</h2>
           <button class="add-new-btn" onclick="openAddPlatformModal()">+ Add Platform</button>
         </div>
-      </div>
         <div class="platform-list">
           ${platformsToShow.map(platform => `
             <div class="item" onclick="selectPlatform('${platform.id}')">
@@ -115,7 +131,6 @@ function renderOverview() {
           <h2>Data Sources</h2>
           <button class="add-new-btn" onclick="openAddSourceModal()">+ Add Source</button>
         </div>
-      </div>
         <div class="source-list">
           ${sourcesToShow.map(source => `
             <div class="item" onclick="selectSource('${source.id}')">
@@ -210,7 +225,7 @@ function renderPlatformDetail() {
       </div>
       
       <h3>Used By</h3>
-      <div class="grid" style="margin-bottom: 15px;">
+      <div class="grid" style="margin-bottom: 15px; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));">
         ${usedByPersonas.map(persona => `
           <div class="item" onclick="selectPersona('${persona.id}')">
             <div class="item-title">${persona.name}</div>
@@ -234,11 +249,29 @@ function renderPlatformDetail() {
 }
 
 /**
- * Render persona detail view - UPDATED VERSION
+ * Render persona detail view
  */
 function renderPersonaDetail() {
   if (!selectedPersona) {
-    // Existing code for when no persona is selected
+    let personasToShow = appData.personas;
+    
+    mainContent.innerHTML = `
+      <div class="card">
+        <div class="section-header">
+          <h2>User Personas</h2>
+          <button class="add-new-btn" onclick="openAddPersonaModal()">+ Add Persona</button>
+        </div>
+        <p>Select a persona to view details</p>
+        <div class="persona-list">
+          ${personasToShow.map(persona => `
+            <div class="item" onclick="selectPersona('${persona.id}')">
+              <div class="item-title">${persona.name}</div>
+              <div class="item-subtitle">${persona.role}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
     return;
   }
   
@@ -265,48 +298,48 @@ function renderPersonaDetail() {
       <p style="color: #666; margin-bottom: 20px;">${persona.role}</p>
       
       <div class="persona-columns">
-      <!-- Column 1 -->
-      <div class="persona-column">
-        <h3>Key Responsibilities</h3>
-        <ul class="persona-list">
-          ${(persona.responsibilities || []).map(item => `<li>${item}</li>`).join('')}
-        </ul>
+        <!-- Column 1 -->
+        <div class="persona-column">
+          <h3>Key Responsibilities</h3>
+          <ul class="persona-list">
+            ${(persona.responsibilities || []).map(item => `<li>${item}</li>`).join('')}
+          </ul>
+          
+          <h3>Business Goals</h3>
+          <ul class="persona-list">
+            ${(persona.businessGoals || []).map(item => `<li>${item}</li>`).join('')}
+          </ul>
+          
+          <h3>Critical Decisions</h3>
+          <ul class="persona-list">
+            ${(persona.criticalDecisions || []).map(item => `<li>${item}</li>`).join('')}
+          </ul>
+        </div>
         
-        <h3>Business Goals</h3>
-        <ul class="persona-list">
-          ${(persona.businessGoals || []).map(item => `<li>${item}</li>`).join('')}
-        </ul>
+        <!-- Column 2 -->
+        <div class="persona-column">
+          <h3>Information Needs</h3>
+          <ul class="persona-list">
+            ${(persona.informationNeeds || []).map(item => `<li>${item}</li>`).join('')}
+          </ul>
+          
+          <h3>Data Consumption Preferences</h3>
+          <ul class="persona-list">
+            ${(persona.dataConsumptionPreferences || []).map(item => `<li>${item}</li>`).join('')}
+          </ul>
+          
+          <h3>Pain Points</h3>
+          <ul class="pain-point-list">
+            ${persona.painPoints.map(point => `<li>${point}</li>`).join('')}
+          </ul>
+        </div>
         
-        <h3>Critical Decisions</h3>
-        <ul class="persona-list">
-          ${(persona.criticalDecisions || []).map(item => `<li>${item}</li>`).join('')}
-        </ul>
+        <!-- Empty third column -->
+        <div class="empty-column"></div>
       </div>
-      
-      <!-- Column 2 -->
-      <div class="persona-column">
-        <h3>Information Needs</h3>
-        <ul class="persona-list">
-          ${(persona.informationNeeds || []).map(item => `<li>${item}</li>`).join('')}
-        </ul>
-        
-        <h3>Data Consumption Preferences</h3>
-        <ul class="persona-list">
-          ${(persona.dataConsumptionPreferences || []).map(item => `<li>${item}</li>`).join('')}
-        </ul>
-        
-        <h3>Pain Points</h3>
-        <ul class="pain-point-list">
-          ${persona.painPoints.map(point => `<li>${point}</li>`).join('')}
-        </ul>
-      </div>
-      
-      <!-- Empty third column -->
-      <div class="empty-column"></div>
-    </div>
       
       <h3>Primary Platforms</h3>
-      <div class="grid" style="margin-bottom: 20px;">
+      <div class="grid" style="margin-bottom: 20px; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));">
         ${usedPlatforms.map(platform => `
           <div class="item" onclick="selectPlatform('${platform.id}')">
             <div class="item-title">${platform.name}</div>
@@ -332,15 +365,6 @@ function renderPersonaDetail() {
   
   mainContent.innerHTML = html;
 }
-
-// In setupEventListeners(), remove any code that clears filters:
-overviewBtn.addEventListener('click', () => {
-  setActiveView('overview');
-  // Clear filters when going to overview
-  filterMode = null;
-  filterEntity = null;
-  renderContent();
-});
 
 /**
  * Render journey detail view
@@ -435,6 +459,7 @@ function renderJourneyDetail() {
   
   mainContent.innerHTML = html;
 }
+
 /**
  * Render source detail view
  */
@@ -485,7 +510,7 @@ function renderSourceDetail() {
     source.associatedPlatforms.includes(p.id)
   );
   
- let html = `
+  let html = `
     <div class="card">
       <div class="section-header">
         <h2>${source.name}</h2>
@@ -494,12 +519,12 @@ function renderSourceDetail() {
       
       <p>${source.description}</p>
       
-      <div class="grid">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
         <div>
           <h3>Source Details</h3>
-          <div class="detail-grid">
-            <strong>Type:</strong> <span class="tag tag-blue">${source.type}</span>
-            <strong>Access Method:</strong> <span>${source.accessMethod}</span>
+          <div>
+            <p><strong>Type:</strong> <span class="tag tag-blue">${source.type}</span></p>
+            <p><strong>Access Method:</strong> <span>${source.accessMethod}</span></p>
           </div>
         </div>
         
@@ -526,7 +551,7 @@ function renderSourceDetail() {
       </div>
       
       <h3>Data Governance</h3>
-      <div class="grid">
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px;">
         <div>
           <strong>Owner:</strong> ${source.dataGovernance.owner}
         </div>
@@ -541,7 +566,7 @@ function renderSourceDetail() {
       </div>
       
       <h3>Associated Platforms</h3>
-      <div class="grid" style="margin-top: 15px;">
+      <div class="grid" style="margin-top: 15px; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));">
         ${associatedPlatforms.map(platform => `
           <div class="item" onclick="selectPlatform('${platform.id}')">
             <div class="item-title">${platform.name}</div>
@@ -554,4 +579,3 @@ function renderSourceDetail() {
   
   mainContent.innerHTML = html;
 }
-        
