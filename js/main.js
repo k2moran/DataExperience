@@ -243,5 +243,27 @@ function clearFilters() {
   renderContent();
 }
 
+/**
+ * Set up event listeners for delete modal
+ */
+function setupDeleteModalEventListeners() {
+  const deleteModalContainer = document.getElementById('deleteModalContainer');
+  const closeDeleteModalBtn = document.querySelector('.close-delete-modal');
+  const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+  
+  // Close modal when clicking the X button
+  closeDeleteModalBtn.addEventListener('click', closeDeleteModal);
+  
+  // Close modal when clicking the Cancel button
+  cancelDeleteBtn.addEventListener('click', closeDeleteModal);
+  
+  // Close modal when clicking outside the modal content
+  window.addEventListener('click', (event) => {
+    if (event.target === deleteModalContainer) {
+      closeDeleteModal();
+    }
+  });
+}
+
 // Initialize the application when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', initializeApp);
