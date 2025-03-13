@@ -722,6 +722,9 @@ function handleEditPlatformSubmit(e) {
   const platformIndex = appData.platforms.findIndex(p => p.id === originalId);
   if (platformIndex === -1) return;
   
+  // Keep track of the original ID for reference updates
+  const oldId = appData.platforms[platformIndex].id;
+  
   // Update platform data
   appData.platforms[platformIndex] = {
     ...appData.platforms[platformIndex],
@@ -732,12 +735,51 @@ function handleEditPlatformSubmit(e) {
     integrations
   };
   
+  // Update references if ID changed
+  if (id !== oldId) {
+    // Update platform references in personas
+    appData.personas.forEach(p => {
+      if (p.primaryPlatforms) {
+        p.primaryPlatforms = p.primaryPlatforms.map(platformId => 
+          platformId === oldId ? id : platformId
+        );
+      }
+    });
+    
+    // Update platform references in sources
+    appData.sources.forEach(s => {
+      if (s.associatedPlatforms) {
+        s.associatedPlatforms = s.associatedPlatforms.map(platformId => 
+          platformId === oldId ? id : platformId
+        );
+      }
+    });
+    
+    // Update platform references in other platforms' integrations
+    appData.platforms.forEach(p => {
+      if (p.integrations) {
+        p.integrations = p.integrations.map(platformId => 
+          platformId === oldId ? id : platformId
+        );
+      }
+    });
+    
+    // Update platform references in journey steps
+    appData.journeys.forEach(j => {
+      j.steps.forEach(step => {
+        if (step.platform === oldId) {
+          step.platform = id;
+        }
+      });
+    });
+  }
+  
   // Save the data
   saveAppData();
   
   // Close modal and refresh view
   closeModal();
-  selectedPlatform = id;
+  selectedPlatform = id; 
   renderContent();
 }
 
