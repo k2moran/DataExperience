@@ -901,3 +901,37 @@ function openEditJourneyModal(journeyId) {
   // Form submission
   document.getElementById('editJourneyForm').addEventListener('submit', handleEditJourneySubmit);
 }
+
+/**
+ * Open the delete confirmation modal
+ * @param {string} entityType - Type of entity being deleted (persona, journey, platform, source)
+ * @param {string} entityId - ID of the entity to delete
+ * @param {string} entityName - Name of the entity to display in the confirmation
+ */
+function openDeleteModal(entityType, entityId, entityName) {
+  const deleteModalContainer = document.getElementById('deleteModalContainer');
+  const deleteConfirmText = document.getElementById('deleteConfirmText');
+  const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+  
+  // Set the confirmation text
+  deleteConfirmText.textContent = `Are you sure you want to delete ${entityType} "${entityName}"?`;
+  
+  // Set up the delete button click handler
+  confirmDeleteBtn.onclick = function() {
+    handleDelete(entityType, entityId);
+    closeDeleteModal();
+  };
+  
+  // Display the modal
+  deleteModalContainer.style.display = 'block';
+}
+
+/**
+ * Close the delete confirmation modal
+ */
+function closeDeleteModal() {
+  const deleteModalContainer = document.getElementById('deleteModalContainer');
+  deleteModalContainer.style.display = 'none';
+}
+
+
