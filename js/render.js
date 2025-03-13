@@ -202,6 +202,7 @@ function renderPlatformDetail() {
       <div class="section-header">
         <h2>${platform.name}</h2>
         <button class="add-new-btn" onclick="openEditPlatformModal('${platform.id}')">Edit Platform</button>
+        <button class="delete-btn" onclick="openDeleteModal('platform', '${platform.id}', '${platform.name}')">Delete Platform</button>
       </div>
       <p>${platform.description}</p>
       
@@ -260,6 +261,7 @@ function renderPersonaDetail() {
         <div class="section-header">
           <h2>User Personas</h2>
           <button class="add-new-btn" onclick="openAddPersonaModal()">+ Add Persona</button>
+          <button class="delete-btn" onclick="openDeleteModal('persona', '${persona.id}', '${persona.name}')">Delete Persona</button>
         </div>
         <p>Select a persona to view details</p>
         <div class="persona-list">
@@ -383,6 +385,7 @@ function renderJourneyDetail() {
         <div class="section-header">
           <h2>User Journeys</h2>
           <button class="add-new-btn" onclick="openAddJourneyModal()">+ Add Journey</button>
+          <button class="delete-btn" onclick="openDeleteModal('journey', '${journey.id}', '${journey.name}')">Delete Journey</button>
         </div>
         <p>Select a journey to view details</p>
         <div class="journey-list">
@@ -485,6 +488,7 @@ function renderSourceDetail() {
         <div class="section-header">
           <h2>Data Sources</h2>
           <button class="add-new-btn" onclick="openAddSourceModal()">+ Add Source</button>
+          <button class="delete-btn" onclick="openDeleteModal('source', '${source.id}', '${source.name}')">Delete Source</button>
         </div>
         <p>Select a source to view details</p>
         <div class="source-list">
