@@ -685,3 +685,122 @@ function handleEditJourneySubmit(e) {
   selectedJourney = id;
   renderContent();
 }
+
+/**
+ * Handle deletion of an entity
+ * @param {string} entityType - Type of entity (persona, journey, platform, source)
+ * @param {string} entityId - ID of the entity to delete
+ */
+function handleDelete(entityType, entityId) {
+  try {
+    switch(entityType) {
+      case 'persona':
+        // Check if persona is referenced in any journeys
+        const journeysWithPersona = appData.journeys.filter(j => j.persona === entityId);
+        if (journeysWithPersona.length > 0) {
+          // Show warning and ask for confirmation
+          if (!confirm(`This persona is used in ${journeysWithPersona.length} journey(s). Deleting it will remove those references. Continue?`)) {
+            return;
+          }
+          
+          // Remove journeys that reference this persona
+          appData.journeys = appData.journeys.filter(j => j.persona !== entityId);
+        }
+        
+        // Remove the persona
+        appData.personas = appData.personas.filter(p => p.id !== entityId);
+        selectedPersona = null;
+        break;
+        
+      case 'journey':
+        // Simply remove the journey
+        appData.journeys = appData.journeys.filter(j => j.id !== entityId);
+        selectedJourney = null;
+        break;
+        
+      case 'platform':
+        // Check for references in personas and sources
+        const personasWithPlatform = appData.personas.filter(p => 
+          p.primaryPlatforms && p.primaryPlatforms.includes(entityId)
+        );
+        
+        const sourcesWithPlatform = appData.sources.filter(s => 
+          s.associatedPlatforms && s.associatedPlatforms.includes(entityId)
+        );
+        
+        const journeysWithPlatformStep = appData.journeys.filter(j => 
+          j.steps.some(step => step.platform === entityId)
+        );
+        
+        const platformsWithIntegration = appData.platforms.filter(p => 
+          p.integrations && p.integrations.includes(entityId)
+        );
+        
+        const totalReferences = personasWithPlatform.length + 
+                              sourcesWithPlatform.length + 
+                              journeysWithPlatformStep.length +
+                              platformsWithIntegration.length;
+        
+        if (totalReferences > 0) {
+          // Show warning and ask for confirmation
+          if (!confirm(`This platform is referenced in ${totalReferences} place(s). Deleting it will remove those references. Continue?`)) {
+            return;
+          }
+          
+          // Remove references from personas
+          appData.personas.forEach(p => {
+            if (p.primaryPlatforms) {
+              p.primaryPlatforms = p.primaryPlatforms.filter(id => id !== entityId);
+            }
+          });
+          
+          // Remove references from sources
+          appData.sources.forEach(s => {
+            if (s.associatedPlatforms) {
+              s.associatedPlatforms = s.associatedPlatforms.filter(id => id !== entityId);
+            }
+          });
+          
+          // Remove references from journey steps
+          appData.journeys.forEach(j => {
+            j.steps.forEach(step => {
+              if (step.platform === entityId) {
+                delete step.platform;
+              }
+            });
+          });
+          
+          // Remove references from platform integrations
+          appData.platforms.forEach(p => {
+            if (p.integrations) {
+              p.integrations = p.integrations.filter(id => id !== entityId);
+            }
+          });
+        }
+        
+        // Remove the platform
+        appData.platforms = appData.platforms.filter(p => p.id !== entityId);
+        selectedPlatform = null;
+        break;
+        
+      case 'source':
+        // No direct references to check, simply remove the source
+        appData.sources = appData.sources.filter(s => s.id !== entityId);
+        selectedSource = null;
+        break;
+    }
+    
+    // Save changes to the database
+    saveAppData();
+    
+    // Refresh the view
+    renderContent();
+    
+  } catch (error) {
+    console.error(`Error deleting ${entityType}:`, error);
+    alert(`An error occurred while deleting the ${entityType}. Please try again.`);
+  }
+}
+
+
+
