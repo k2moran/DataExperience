@@ -261,7 +261,6 @@ function renderPersonaDetail() {
         <div class="section-header">
           <h2>User Personas</h2>
           <button class="add-new-btn" onclick="openAddPersonaModal()">+ Add Persona</button>
-          <button class="delete-btn" onclick="openDeleteModal('persona', '${persona.id}', '${persona.name}')">Delete Persona</button>
         </div>
         <p>Select a persona to view details</p>
         <div class="persona-list">
@@ -295,7 +294,10 @@ function renderPersonaDetail() {
     <div class="card">
       <div class="section-header">
         <h2>${persona.name}</h2>
-        <button class="add-new-btn" onclick="openEditPersonaModal('${persona.id}')">Edit Persona</button>
+        <div>
+          <button class="add-new-btn" onclick="openEditPersonaModal('${persona.id}')">Edit Persona</button>
+          <button class="delete-btn" onclick="openDeleteModal('persona', '${persona.id}', '${persona.name}')">Delete Persona</button>
+        </div>
       </div>
       <p style="color: #666; margin-bottom: 20px;">${persona.role}</p>
       
@@ -385,7 +387,6 @@ function renderJourneyDetail() {
         <div class="section-header">
           <h2>User Journeys</h2>
           <button class="add-new-btn" onclick="openAddJourneyModal()">+ Add Journey</button>
-          <button class="delete-btn" onclick="openDeleteModal('journey', '${journey.id}', '${journey.name}')">Delete Journey</button>
         </div>
         <p>Select a journey to view details</p>
         <div class="journey-list">
@@ -416,7 +417,10 @@ function renderJourneyDetail() {
     <div class="card">
       <div class="section-header">
         <h2>${journey.name}</h2>
-        <button class="add-new-btn" onclick="openEditJourneyModal('${journey.id}')">Edit Journey</button>
+        <div>
+          <button class="add-new-btn" onclick="openEditJourneyModal('${journey.id}')">Edit Journey</button>
+          <button class="delete-btn" onclick="openDeleteModal('journey', '${journey.id}', '${journey.name}')">Delete Journey</button>
+        </div>
       </div>
       
       ${persona ? `
@@ -488,7 +492,6 @@ function renderSourceDetail() {
         <div class="section-header">
           <h2>Data Sources</h2>
           <button class="add-new-btn" onclick="openAddSourceModal()">+ Add Source</button>
-          <button class="delete-btn" onclick="openDeleteModal('source', '${source.id}', '${source.name}')">Delete Source</button>
         </div>
         <p>Select a source to view details</p>
         <div class="source-list">
@@ -518,7 +521,10 @@ function renderSourceDetail() {
     <div class="card">
       <div class="section-header">
         <h2>${source.name}</h2>
-        <button class="add-new-btn" onclick="openEditSourceModal('${source.id}')">Edit Source</button>
+        <div>
+          <button class="add-new-btn" onclick="openEditSourceModal('${source.id}')">Edit Source</button>
+          <button class="delete-btn" onclick="openDeleteModal('source', '${source.id}', '${source.name}')">Delete Source</button>
+        </div>
       </div>
       
       <p>${source.description}</p>
