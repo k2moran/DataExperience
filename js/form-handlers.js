@@ -687,6 +687,63 @@ function handleEditJourneySubmit(e) {
 }
 
 /**
+ * Handle Edit Platform form submission
+ * @param {Event} e - Form submit event
+ */
+function handleEditPlatformSubmit(e) {
+  e.preventDefault();
+  
+  const originalId = document.getElementById('originalPlatformId').value;
+  const id = document.getElementById('platformId').value.trim();
+  const name = document.getElementById('platformName').value.trim();
+  const description = document.getElementById('platformDescription').value.trim();
+  
+  // Get capabilities
+  const capabilities = [];
+  document.querySelectorAll('#capabilitiesContainer input[name="capability"]').forEach(input => {
+    const value = input.value.trim();
+    if (value) capabilities.push(value);
+  });
+  
+  // Get integrations
+  const integrations = [];
+  document.querySelectorAll('#integrationsContainer input[name="integration"]').forEach(input => {
+    const value = input.value.trim();
+    if (value) integrations.push(value);
+  });
+  
+  // Validate ID uniqueness if changed
+  if (id !== originalId && appData.platforms.some(p => p.id === id)) {
+    alert('Platform ID already exists. Please choose a unique ID.');
+    return;
+  }
+  
+  // Find the platform to update
+  const platformIndex = appData.platforms.findIndex(p => p.id === originalId);
+  if (platformIndex === -1) return;
+  
+  // Update platform data
+  appData.platforms[platformIndex] = {
+    ...appData.platforms[platformIndex],
+    id,
+    name,
+    description,
+    capabilities,
+    integrations
+  };
+  
+  // Save the data
+  saveAppData();
+  
+  // Close modal and refresh view
+  closeModal();
+  selectedPlatform = id;
+  renderContent();
+}
+
+
+
+/**
  * Handle deletion of an entity
  * @param {string} entityType - Type of entity (persona, journey, platform, source)
  * @param {string} entityId - ID of the entity to delete
