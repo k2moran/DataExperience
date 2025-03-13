@@ -143,6 +143,8 @@ function setupEventListeners() {
     renderContent();
   });
 
+  setupDeleteModalEventListeners();
+  
   // Modal event listeners
   closeModalBtn.addEventListener('click', closeModal);
   window.addEventListener('click', (event) => {
